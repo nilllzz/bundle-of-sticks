@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import HomePage from './views/home/homePage';
+import HomePage from './views/home/home-page';
 import Shell from './views/shell/main';
+import NotFoundPage from './views/not-found/not-found-page';
 
 export default class PageRouter extends React.Component<any, any> {
 	constructor(props: any) {
@@ -10,15 +11,12 @@ export default class PageRouter extends React.Component<any, any> {
 
 	public render() {
 		return (
-			<BrowserRouter basename="bos">
+			<BrowserRouter>
 				<div>
 					<Shell>
 						<Switch>
-							<Route path="/">
-								<Switch>
-									<Route path="/" exact component={HomePage} />
-								</Switch>
-							</Route>
+							<Route path="/" exact component={HomePage} />
+							<Route component={NotFoundPage} />
 						</Switch>
 					</Shell>
 				</div>

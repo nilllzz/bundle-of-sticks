@@ -2,6 +2,7 @@
 @import url('shell/main.css');
 @import url('shell/footer.css');
 @import url('shell/header.css');
+@import url('views/not-found.css');
 
 body {
 	/* system font stack */
