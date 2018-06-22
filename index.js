@@ -7,8 +7,8 @@ const port = 80;
 const app = express();
 
 app.use('/', express.static(__dirname + '/pages/index/public'));
-app.get('/*', function (request, response) {
-    response.sendFile(path.resolve(__dirname, 'pages/index/public', 'index.html'));
+app.get('/*', function(request, response) {
+	response.sendFile(path.resolve(__dirname, 'pages/index/public', 'index.html'));
 });
 
 app.listen(port);
