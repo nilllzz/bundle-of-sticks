@@ -1,0 +1,55 @@
+.shell-header-title {
+	color: rgb(220, 220, 220);
+	font-size: 28;
+}
+
+.shell-header-inner {
+	width: var(--content-max-width);
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.shell-header-title:hover {
+	animation: rainbow-text 5s infinite ease-in-out;
+}
+
+.shell-header-body {
+	display: flex;
+	justify-content: center;
+}
+
+@keyframes rainbow-text {
+	0% {
+		text-shadow: 0 0 12px #f44336;
+	}
+	10% {
+		text-shadow: 0 0 16px #673ab7;
+	}
+	20% {
+		text-shadow: 0 0 20px #3f51b5;
+	}
+	30% {
+		text-shadow: 0 0 28px #00bcd4;
+	}
+	40% {
+		text-shadow: 0 0 40px #009688;
+	}
+	50% {
+		text-shadow: 0 0 36px #4caf50;
+	}
+	60% {
+		text-shadow: 0 0 28px #8bc34a;
+	}
+	70% {
+		text-shadow: 0 0 22px #ffc107;
+	}
+	80% {
+		text-shadow: 0 0 24px #ff9800;
+	}
+	90% {
+		text-shadow: 0 0 16px #ff5722;
+	}
+	100% {
+		text-shadow: 0 0 14px #e91e63;
+	}
+}

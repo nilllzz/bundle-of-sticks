@@ -1,0 +1,12 @@
+.shell-main-content {
+	padding-top: 60px;
+	padding-bottom: 60px;
+	background-color: rgb(230, 230, 230);
+	display: flex;
+	justify-content: center;
+}
+
+.shell-main-children {
+	width: var(--content-max-width);
+	display: block;
+}

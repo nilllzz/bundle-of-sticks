@@ -12,4 +12,6 @@ app.get('/*', function(request, response) {
 });
 
 app.listen(port);
+
+console.clear();
 console.log('Express server started on port ' + port);

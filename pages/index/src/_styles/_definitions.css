@@ -1,0 +1,14 @@
+:root {
+	--main-bg-color: rgb(32, 35, 42);
+	--content-max-width: 800px;
+}
+
+.unstyled-link {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+.unstyled-link:hover {
+	color: inherit;
+	text-decoration: inherit;
+}

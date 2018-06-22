@@ -1,0 +1,27 @@
+.shell-footer-upper {
+	font-size: 24px;
+	color: rgb(220, 220, 220);
+	background-color: rgb(40, 44, 52);
+	display: flex;
+	justify-content: center;
+}
+
+.shell-footer-lower {
+	font-size: 16px;
+	color: rgb(155, 155, 155);
+	background-color: var(--main-bg-color);
+	display: flex;
+	justify-content: center;
+}
+
+.shell-footer-subbody {
+	width: var(--content-max-width);
+	padding-top: 20px;
+	padding-bottom: 10px;
+	display: flex;
+	justify-content: center;
+}
+
+.shell-footer-heart {
+	color: red;
+}

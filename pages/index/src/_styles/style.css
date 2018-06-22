@@ -1,0 +1,12 @@
+@import url('_definitions.css');
+@import url('shell/main.css');
+@import url('shell/footer.css');
+@import url('shell/header.css');
+
+body {
+	/* system font stack */
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
+		Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+	background-color: var(--main-bg-color);
+}
