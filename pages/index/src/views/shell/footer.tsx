@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Glyphicon } from 'react-bootstrap';
 
 export default class Footer extends React.Component<any, any> {
 	public render() {
@@ -8,7 +9,9 @@ export default class Footer extends React.Component<any, any> {
 					<div className="shell-footer-upper">
 						<span className="shell-footer-subbody">
 							Outsourced to chinese slave labours with
-							<span className="shell-footer-heart">❤️</span>
+							<span className="shell-footer-heart">
+								<Glyphicon glyph="heart" />
+							</span>
 						</span>
 					</div>
 					<div className="shell-footer-lower">

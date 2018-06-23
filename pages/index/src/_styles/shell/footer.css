@@ -23,6 +23,9 @@
 }
 
 .shell-footer-heart {
-	color: red;
+	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 	margin-left: 8px;
+	margin-top: 5px;
 }
