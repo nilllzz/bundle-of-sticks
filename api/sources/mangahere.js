@@ -1,11 +1,23 @@
-const httpHelper = require('../http-helper');
+const HttpHelper = require('../http-helper');
 const { JSDOM } = require('jsdom');
 
 const HOST = 'www.mangahere.cc';
+const ID = 'mangaherecc';
 
 module.exports = class MangaHere {
+	static get id() {
+		return ID;
+	}
+
+	static get hostInfo() {
+		return {
+			url: HOST,
+			id: ID,
+		};
+	}
+
 	static async search(query) {
-		const result = await httpHelper.get(HOST, 80, '/search.php?name=' + query);
+		const result = await HttpHelper.get(HOST, 80, '/search.php?name=' + query);
 		const results = [];
 
 		let body = result.body + '';
@@ -21,7 +33,7 @@ module.exports = class MangaHere {
 				results.push({
 					name: title,
 					link: path,
-					host: HOST,
+					host: MangaHere.hostInfo,
 				});
 			}
 		}
@@ -30,7 +42,7 @@ module.exports = class MangaHere {
 	}
 
 	static async getChapters(mangaLink) {
-		const result = await httpHelper.get(HOST, 80, mangaLink);
+		const result = await HttpHelper.get(HOST, 80, mangaLink);
 		const chapters = [];
 
 		const dom = new JSDOM(result.body);
@@ -47,22 +59,22 @@ module.exports = class MangaHere {
 			const dateContainer = chapterContainer.children[1];
 			const dateStr = dateContainer.innerHTML.trim();
 
-			const pages = await MangaHere.getPages(path);
-
 			chapters.push({
 				name: title,
 				link: path,
 				date: dateStr,
-				host: HOST,
-				pages: pages,
+				host: MangaHere.hostInfo,
 			});
 		}
+
+		// reverse chapters so that the first one appears on top
+		chapters.reverse();
 
 		return chapters;
 	}
 
 	static async getPages(chapterLink) {
-		const result = await httpHelper.get(HOST, 80, chapterLink);
+		const result = await HttpHelper.get(HOST, 80, chapterLink);
 		const pages = [];
 
 		const dom = new JSDOM(result.body);
@@ -80,7 +92,7 @@ module.exports = class MangaHere {
 				name: title,
 				num: num,
 				link: path,
-				host: HOST,
+				host: MangaHere.hostInfo,
 			});
 
 			num++;
@@ -91,13 +103,13 @@ module.exports = class MangaHere {
 
 	// returns the page's image as base 64
 	static async getPageImage(pageLink) {
-		const result = await httpHelper.get(HOST, 80, pageLink);
+		const result = await HttpHelper.get(HOST, 80, pageLink);
 		const dom = new JSDOM(result.body);
 
 		const imgElement = dom.window.document.getElementById('image');
 		const src = imgElement.getAttribute('src');
 
-		const imgbase64 = await httpHelper.getImageBase64(src);
+		const imgbase64 = await HttpHelper.getImageBase64(src);
 		return imgbase64.body;
 	}
 };

@@ -1,4 +1,17 @@
 module.exports = class HttpHelper {
+	static respond(response, code, data) {
+		let success = false;
+		if (code >= 200 && code < 300) {
+			success = true;
+		}
+		const payload = {
+			success: success,
+			code: code,
+			data: data,
+		};
+		response.send(payload);
+	}
+
 	static async get(host, port, path) {
 		const http = require('http');
 

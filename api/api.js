@@ -1,27 +1,48 @@
+const HttpHelper = require('./http-helper');
+const SourceHelper = require('./sources/source-helper');
+
 module.exports = function defineApi(expressApp) {
-	// search
-	const searchFunc = require('./search');
+	defineSearch(expressApp);
+	defineChapters(expressApp);
+};
+
+function requireQueryParams(request, params) {
+	if (request.query === undefined) {
+		return false;
+	}
+	for (const param of params) {
+		if (request.query[param] === undefined) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function defineSearch(expressApp) {
 	expressApp.get('/api/search', async function(request, response) {
-		if (!request.query || !request.query.q) {
+		if (!requireQueryParams(request, ['q'])) {
 			// no query? send empty results
-			response.send(getHttpResponse(200, []));
+			HttpHelper.respond(response, 200, []);
 			return;
 		}
 		const query = request.query.q;
 
-		const results = await searchFunc(query);
-		response.send(getHttpResponse(200, results));
+		const results = await SourceHelper.search(query);
+		HttpHelper.respond(response, 200, results);
 	});
-};
+}
 
-function getHttpResponse(code, obj) {
-	let success = false;
-	if (code >= 200 && code < 300) {
-		success = true;
-	}
-	return {
-		success: success,
-		code: code,
-		data: obj,
-	};
+function defineChapters(expressApp) {
+	expressApp.get('/api/manga/chapters', async function(request, response) {
+		if (!requireQueryParams(request, ['host', 'manga'])) {
+			HttpHelper.respond(response, 200, []);
+			return;
+		}
+
+		const hostId = decodeURIComponent(request.query.host);
+		const mangaLink = decodeURIComponent(request.query.manga);
+
+		const chapters = await SourceHelper.getChapters(hostId, mangaLink);
+		HttpHelper.respond(response, 200, chapters);
+	});
 }
