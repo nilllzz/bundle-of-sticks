@@ -57,7 +57,7 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			<div className="search-page-main">
 				<div className="search-page-title">
 					Search results for
-					<b>{' ' + query}</b>
+					<b className="accent-color-text">{' ' + query}</b>
 				</div>
 				<div className="search-page-results">{this.renderSearchResults()}</div>
 			</div>

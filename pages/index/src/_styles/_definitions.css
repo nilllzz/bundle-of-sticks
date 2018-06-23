@@ -1,7 +1,13 @@
 :root {
 	--main-bg-color: rgb(32, 35, 42);
-	--accent-color: rgb(97, 218, 251);
+	--accent-color: rgb(231, 115, 61);
 	--content-max-width: 1000px;
+}
+
+.accent-color-text {
+	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 .unstyled-link {
