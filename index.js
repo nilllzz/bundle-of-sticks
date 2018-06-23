@@ -2,9 +2,12 @@ require('babel-polyfill');
 
 const express = require('express');
 const path = require('path');
-const port = 80;
+const port = 8080;
 
 const app = express();
+
+const registerApi = require('./api/api');
+registerApi(app);
 
 app.use('/', express.static(__dirname + '/pages/index/public'));
 app.get('/*', function(request, response) {
@@ -13,5 +16,4 @@ app.get('/*', function(request, response) {
 
 app.listen(port);
 
-console.clear();
 console.log('Express server started on port ' + port);
