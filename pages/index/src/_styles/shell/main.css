@@ -1,6 +1,4 @@
 .shell-main-content {
-	padding-top: 60px;
-	padding-bottom: 60px;
 	background-color: rgb(230, 230, 230);
 	display: flex;
 	justify-content: center;
@@ -21,6 +19,8 @@
 }
 
 .shell-split-content-right {
+	padding-top: 60px;
+	padding-bottom: 60px;
 	width: 100%;
 	padding-left: 50px;
 }
