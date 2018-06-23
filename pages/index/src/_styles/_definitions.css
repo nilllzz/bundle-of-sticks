@@ -10,6 +10,12 @@
 	-webkit-text-fill-color: transparent;
 }
 
+.accent-color-text-hover:hover {
+	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
 .unstyled-link {
 	color: inherit;
 	text-decoration: inherit;
@@ -23,4 +29,10 @@
 .unstyled-link:focus {
 	color: inherit;
 	text-decoration: inherit;
+}
+
+.unstyled-textinput {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	border-style: none;
 }

@@ -42,7 +42,7 @@ export default class HeaderSearchbar extends React.Component<any, HeaderSearchba
 			<div className="header-searchbar-main">
 				<input
 					id="header-searchbar"
-					className="header-searchbar-input"
+					className="header-searchbar-input unstyled-textinput"
 					type="text"
 					placeholder="Search Mangas"
 					value={this.state.query}

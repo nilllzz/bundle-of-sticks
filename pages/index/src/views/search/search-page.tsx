@@ -3,8 +3,11 @@ import * as qs from 'query-string';
 import Manga from '../../app/models/manga.model';
 import { Api } from '../../app/api';
 import SearchResult from '../../components/search/search-result';
+import CoolSearchbar from './cool-searchbar';
+import { Link } from 'react-router-dom';
 
 type SearchPageState = {
+	nextQuery: string | null;
 	lastSearchQuery: string | null;
 	results: Manga[] | null;
 	loading: boolean;
@@ -14,7 +17,9 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 	constructor(props: any) {
 		super(props);
 
-		this.state = { lastSearchQuery: null, results: null, loading: true };
+		this.state = { nextQuery: null, lastSearchQuery: null, results: null, loading: true };
+
+		this.onSearchbarSearch = this.onSearchbarSearch.bind(this);
 	}
 
 	async componentDidMount() {
@@ -33,6 +38,9 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 
 	private async search() {
 		const query = this.getQuery();
+		if (this.state.nextQuery && this.state.nextQuery !== query) {
+			return;
+		}
 		if (query === undefined) {
 			this.setState({
 				loading: false,
@@ -58,6 +66,18 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 		}
 	}
 
+	private onSearchbarSearch(query: string) {
+		this.setState(
+			{
+				nextQuery: query,
+			},
+			() => {
+				const element = document.getElementById('search-next');
+				element.click();
+			}
+		);
+	}
+
 	private renderSearchResults() {
 		if (this.state.loading) {
 			return <div>Loading...</div>;
@@ -71,21 +91,26 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 	}
 
 	private renderContent() {
-		if (this.state.lastSearchQuery === null) {
+		if (this.state.lastSearchQuery === null && !this.state.loading) {
 			// user has not searched for anything through the search bar, display latest searches instead
 			return (
-				<div className="search-page-title">
-					Enter your <b className="accent-color-text">search</b> into the bar above
+				<div className="search-page-content">
+					<CoolSearchbar
+						onSearch={this.onSearchbarSearch}
+						text="Click to "
+						highlight="search"
+					/>
 				</div>
 			);
 		} else {
 			const query = this.getQuery();
 			return (
-				<div>
-					<div className="search-page-title">
-						Search results for
-						<b className="accent-color-text">{' ' + query}</b>
-					</div>
+				<div className="search-page-content">
+					<CoolSearchbar
+						onSearch={this.onSearchbarSearch}
+						text="Search results for "
+						highlight={query}
+					/>
 					<div className="search-page-results">{this.renderSearchResults()}</div>
 				</div>
 			);
@@ -93,6 +118,11 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 	}
 
 	public render() {
-		return <div className="search-page-main">{this.renderContent()}</div>;
+		return (
+			<div className="search-page-main">
+				{this.renderContent()}
+				<Link to={'/search?query=' + this.state.nextQuery} hidden id="search-next" />
+			</div>
+		);
 	}
 }

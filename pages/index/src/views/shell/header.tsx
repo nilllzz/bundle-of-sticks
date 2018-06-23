@@ -8,7 +8,7 @@ export default class Header extends React.Component<any, any> {
 			<header>
 				<div className="shell-header-body">
 					<div className="shell-header-inner">
-						<span className="shell-header-title">
+						<span className="shell-header-title accent-color-text-hover">
 							<Link to="/" className="unstyled-link">
 								Bundle of Sticks
 							</Link>

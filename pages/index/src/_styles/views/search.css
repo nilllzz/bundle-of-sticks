@@ -1,3 +1,22 @@
-.search-page-title {
+.cool-searchbar-main {
+	max-width: 800px;
+}
+
+.cool-searchbar-placeholder {
 	font-size: 40px;
+	margin-bottom: 4px;
+}
+
+.cool-searchbar-container {
+	max-width: 520px;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	border-bottom-color: rgb(200, 200, 200);
+}
+
+.cool-searchbar-input {
+	background-color: transparent;
+	font-size: 40px;
+	width: 100%;
+	font-weight: bold;
 }

@@ -12,12 +12,6 @@
 	justify-content: space-between;
 }
 
-.shell-header-title:hover {
-	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
-}
-
 .shell-header-body {
 	display: flex;
 	justify-content: center;
@@ -41,11 +35,7 @@
 }
 
 .header-searchbar-input {
-	-moz-appearance: none;
-	-webkit-appearance: none;
-
 	background-color: var(--main-bg-color);
-	border-style: none;
 
 	font-size: 18px;
 	padding-left: 32px;
