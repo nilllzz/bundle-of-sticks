@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import HeaderSearchbar from './header-searchbar';
+import HeaderSearchbar from '../../components/searchbar/header-searchbar';
 
 export default class Header extends React.Component<any, any> {
 	public render() {
