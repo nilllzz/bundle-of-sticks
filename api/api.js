@@ -25,7 +25,7 @@ function defineSearch(expressApp) {
 			HttpHelper.respond(response, 200, []);
 			return;
 		}
-		const query = request.query.q;
+		const query = decodeURIComponent(request.query.q);
 
 		const results = await SourceHelper.search(query);
 		HttpHelper.respond(response, 200, results);
