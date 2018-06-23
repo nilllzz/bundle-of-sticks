@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as qs from 'query-string';
 import { Glyphicon } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -10,10 +11,14 @@ export default class HeaderSearchbar extends React.Component<any, HeaderSearchba
 	constructor(props: any) {
 		super(props);
 
-		this.state = { query: '' };
+		this.state = { query: this.getQuery() };
 
 		this.setQuery = this.setQuery.bind(this);
 		this.onKeyPressHandler = this.onKeyPressHandler.bind(this);
+	}
+
+	private getQuery() {
+		return qs.parse(window.location.search).query;
 	}
 
 	private setQuery() {

@@ -7,6 +7,7 @@
 @import url('shell/header.css');
 @import url('views/home.css');
 @import url('views/not-found.css');
+@import url('views/search.css');
 
 body {
 	/* system font stack */

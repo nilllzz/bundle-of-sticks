@@ -13,3 +13,8 @@
 	color: inherit;
 	text-decoration: inherit;
 }
+
+.unstyled-link:focus {
+	color: inherit;
+	text-decoration: inherit;
+}
