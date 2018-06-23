@@ -1,7 +1,7 @@
 :root {
 	--main-bg-color: rgb(32, 35, 42);
 	--accent-color: rgb(231, 115, 61);
-	--content-max-width: 1000px;
+	--content-max-width: 1200px;
 }
 
 .accent-color-text {
