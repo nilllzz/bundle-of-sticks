@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import HeaderSearchbar from './header-searchbar';
 
 export default class Header extends React.Component<any, any> {
 	public render() {
@@ -12,6 +13,9 @@ export default class Header extends React.Component<any, any> {
 								Bundle of Sticks
 							</Link>
 						</span>
+						<div className="shell-header-content">
+							<HeaderSearchbar />
+						</div>
 					</div>
 				</div>
 			</header>

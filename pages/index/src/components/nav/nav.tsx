@@ -18,12 +18,14 @@ export default class Nav extends React.Component<NavProps, any> {
 						linkTo="/search"
 						location={this.props.location}
 					/>
+					<NavSeparator />
 					<NavItem
-						text="Favorites"
-						icon="star"
-						linkTo="/favorites"
+						text="Bookmarks"
+						icon="bookmark"
+						linkTo="/bookmarks"
 						location={this.props.location}
 					/>
+					<NavItem text="History" linkTo="/history" location={this.props.location} />
 					<NavSeparator />
 					<NavItem text="Sources" linkTo="/sources" location={this.props.location} />
 				</div>
