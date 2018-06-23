@@ -6,12 +6,20 @@
 	justify-content: center;
 }
 
-.shell-main-children {
+.shell-split-content {
 	width: var(--content-max-width);
+	display: flex;
+}
+
+.shell-main-children {
 	display: block;
 }
 
 .shell-split-content-left {
 	max-width: 200px;
 	width: 30%;
+}
+
+.shell-split-content-right {
+	width: 70%;
 }
