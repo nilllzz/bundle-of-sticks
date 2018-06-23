@@ -20,8 +20,11 @@
 }
 
 .shell-split-content-right {
+	width: 100%;
+}
+
+.shell-content-padded {
+	padding-left: 50px;
 	padding-top: 60px;
 	padding-bottom: 60px;
-	width: 100%;
-	padding-left: 50px;
 }

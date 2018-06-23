@@ -16,6 +16,10 @@
 	-webkit-text-fill-color: transparent;
 }
 
+.accent-color-background {
+	background: linear-gradient(135deg, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+}
+
 .unstyled-link {
 	color: inherit;
 	text-decoration: inherit;
@@ -35,4 +39,8 @@
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	border-style: none;
+}
+
+.page-main-header {
+	font-size: 40px;
 }

@@ -119,7 +119,7 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 
 	public render() {
 		return (
-			<div className="search-page-main">
+			<div className="search-page-main shell-content-padded">
 				{this.renderContent()}
 				<Link to={'/search?query=' + this.state.nextQuery} hidden id="search-next" />
 			</div>
