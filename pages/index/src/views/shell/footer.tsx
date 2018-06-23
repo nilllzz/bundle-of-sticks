@@ -7,7 +7,7 @@ export default class Footer extends React.Component<any, any> {
 				<div className="shell-footer-body">
 					<div className="shell-footer-upper">
 						<span className="shell-footer-subbody">
-							Outsourced to chinese slave labours with{' '}
+							Outsourced to chinese slave labours with
 							<span className="shell-footer-heart">❤️</span>
 						</span>
 					</div>

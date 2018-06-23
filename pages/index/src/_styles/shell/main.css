@@ -10,3 +10,8 @@
 	width: var(--content-max-width);
 	display: block;
 }
+
+.shell-split-content-left {
+	max-width: 200px;
+	width: 30%;
+}

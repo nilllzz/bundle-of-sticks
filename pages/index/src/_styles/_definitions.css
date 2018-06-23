@@ -1,6 +1,7 @@
 :root {
 	--main-bg-color: rgb(32, 35, 42);
-	--content-max-width: 800px;
+	--accent-color: rgb(97, 218, 251);
+	--content-max-width: 1000px;
 }
 
 .unstyled-link {

@@ -1,7 +1,11 @@
+/* import definitions first */
 @import url('_definitions.css');
+
+@import url('components/nav.css');
 @import url('shell/main.css');
 @import url('shell/footer.css');
 @import url('shell/header.css');
+@import url('views/home.css');
 @import url('views/not-found.css');
 
 body {

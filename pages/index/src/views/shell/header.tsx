@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 export default class Header extends React.Component<any, any> {
 	public render() {
@@ -7,9 +8,9 @@ export default class Header extends React.Component<any, any> {
 				<div className="shell-header-body">
 					<div className="shell-header-inner">
 						<span className="shell-header-title">
-							<a href="/" className="unstyled-link">
+							<Link to="/" className="unstyled-link">
 								Bundle of Sticks
-							</a>
+							</Link>
 						</span>
 					</div>
 				</div>
