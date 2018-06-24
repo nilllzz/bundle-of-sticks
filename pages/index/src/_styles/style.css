@@ -1,6 +1,7 @@
 /* import definitions first */
 @import url('_definitions.css');
 
+@import url('components/app.css');
 @import url('components/nav.css');
 @import url('shell/main.css');
 @import url('shell/footer.css');

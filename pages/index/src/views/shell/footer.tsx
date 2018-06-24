@@ -9,7 +9,7 @@ export default class Footer extends React.Component<any, any> {
 					<div className="shell-footer-upper">
 						<span className="shell-footer-subbody">
 							Outsourced to chinese slave workers with
-							<span className="shell-footer-heart">
+							<span className="shell-footer-heart accent-gradient-text">
 								<Glyphicon glyph="heart" />
 							</span>
 						</span>

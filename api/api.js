@@ -25,7 +25,7 @@ function defineSearch(expressApp) {
 			HttpHelper.respond(response, 200, []);
 			return;
 		}
-		const query = decodeURIComponent(request.query.q);
+		const query = encodeURIComponent(request.query.q);
 		let providers = request.query.providers;
 		if (providers !== undefined) {
 			if (providers.length === 0) {

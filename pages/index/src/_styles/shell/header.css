@@ -1,5 +1,5 @@
 .shell-header-title {
-	color: rgb(220, 220, 220);
+	color: var(--default-white);
 	font-size: 28;
 	font-weight: bold;
 }
@@ -22,36 +22,13 @@
 	display: flex;
 }
 
-.header-searchbar-main {
-	margin-right: 20px;
-	position: relative;
-	display: inline-block;
-	color: rgb(220, 220, 220);
-}
-
-.header-searchbar-icon {
-	position: absolute;
-	left: 8px;
-	top: 10px;
-}
-
-.header-searchbar-input {
-	background-color: var(--main-bg-color);
-
-	font-size: 18px;
-	padding-left: 32px;
-	padding-right: 10px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-
-	border-radius: 4px;
-}
-
-.header-searchbar-input:focus {
-	background-color: rgb(55, 57, 64);
-}
-
 ::placeholder {
 	color: rgb(160, 160, 160);
 	opacity: 1;
+}
+
+.privacy-mode-switcher-main {
+	font-size: 26px;
+	color: var(--default-white);
+	margin-right: 40px;
 }

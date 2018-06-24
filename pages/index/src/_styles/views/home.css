@@ -1,11 +1,10 @@
 .home-main {
-	display: flex;
 }
 
 .home-banner {
 	width: 100%;
 	height: 200px;
-	color: rgb(230, 230, 230);
+	color: var(--default-white);
 	font-weight: bold;
 	display: flex;
 	justify-content: center;

@@ -1,6 +1,6 @@
 .shell-footer-upper {
 	font-size: 24px;
-	color: rgb(220, 220, 220);
+	color: var(--default-white);
 	background-color: rgb(40, 44, 52);
 	display: flex;
 	justify-content: center;
@@ -23,9 +23,6 @@
 }
 
 .shell-footer-heart {
-	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
 	margin-left: 8px;
 	margin-top: 5px;
 }

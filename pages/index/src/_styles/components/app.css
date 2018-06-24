@@ -1,0 +1,60 @@
+.app-button {
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 3px;
+	border-color: var(--accent-color);
+	background-color: var(--default-white);
+	display: inline-flex;
+	align-items: center;
+	font-size: 18px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.app-button:hover {
+	background-color: var(--accent-color);
+	color: var(--default-white);
+}
+
+.app-button:active {
+	background-color: var(--secondary-color);
+}
+
+.app-button-icon {
+	margin-right: 8px;
+}
+
+.app-button-icon-big {
+	font-size: 24px;
+}
+
+.app-separator {
+	margin-left: 6px;
+	margin-right: 6px;
+}
+
+.app-loading {
+	display: flex;
+}
+
+.app-loading-circle {
+	animation: 0.5s loading infinite ease-in-out;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	margin-right: 4px;
+}
+
+@keyframes loading {
+	0% {
+		background: var(--accent-color);
+	}
+	50% {
+		background: var(--accent-color-gradient);
+	}
+	100% {
+		background: var(--accent-color);
+	}
+}

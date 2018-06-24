@@ -4,12 +4,11 @@ import Manga from '../../app/models/manga.model';
 import { Api } from '../../app/api';
 import SearchResult from '../../components/search/search-result';
 import CoolSearchbar from '../../components/search/cool-searchbar';
-import { Link } from 'react-router-dom';
 import RecentSearches from '../../components/search/recent-searches';
-import ProviderSelector from '../../components/search/provider-selector';
 import { Provider } from '../../app/providers';
 import Providers from '../../app/providers';
 import LocalState from '../../app/local-state';
+import AppLoading from '../../components/app/app-loading';
 
 type SearchPageState = {
 	nextQuery: string | null;
@@ -40,7 +39,6 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			nextQuery: null,
 		};
 
-		this.onSearchbarSearch = this.onSearchbarSearch.bind(this);
 		this.onUpdateActiveProviders = this.onUpdateActiveProviders.bind(this);
 	}
 
@@ -72,6 +70,8 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 	private async search() {
 		const query = this.getQuery();
 
+		RecentSearches.addSearch(query);
+
 		this.setState(
 			{
 				lastSearchQuery: query,
@@ -94,21 +94,9 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 		);
 	}
 
-	private onSearchbarSearch(query: string) {
-		this.setState(
-			{
-				nextQuery: query,
-			},
-			() => {
-				const element = document.getElementById('search-next');
-				element.click();
-			}
-		);
-	}
-
 	private renderSearchResults() {
 		if (this.state.loading) {
-			return <div>Loading...</div>;
+			return <AppLoading />;
 		} else {
 			if (!this.state.results || this.state.results.length === 0) {
 				return <div>No results.</div>;
@@ -131,7 +119,6 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			return (
 				<div className="search-page-content">
 					<CoolSearchbar
-						onSearch={this.onSearchbarSearch}
 						text="Click to "
 						highlight="search"
 						updateActiveProviders={this.onUpdateActiveProviders}
@@ -148,7 +135,6 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			return (
 				<div className="search-page-content">
 					<CoolSearchbar
-						onSearch={this.onSearchbarSearch}
 						text="Search results for "
 						highlight={query}
 						updateActiveProviders={this.onUpdateActiveProviders}
@@ -162,11 +148,6 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 	}
 
 	public render() {
-		return (
-			<div className="search-page-main shell-content-padded">
-				{this.renderContent()}
-				<Link to={'/search?query=' + this.state.nextQuery} hidden id="search-next" />
-			</div>
-		);
+		return <div className="search-page-main shell-content-padded">{this.renderContent()}</div>;
 	}
 }

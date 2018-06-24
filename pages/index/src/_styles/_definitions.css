@@ -1,25 +1,27 @@
 :root {
 	--main-bg-color: rgb(32, 35, 42);
 	--accent-color: rgb(231, 115, 61);
-	--accent-color-50: rgb(231, 115, 61, 0.5);
+	--accent-color-gradient: rgb(184, 70, 148);
 	--accent-color-20: rgb(231, 115, 61, 0.2);
-	--secondary-color-50: rgb(184, 70, 148, 0.5);
+	--secondary-color: rgb(179, 89, 48);
+	--default-white: rgb(230, 230, 230);
+	--default-gray: rgb(200, 200, 200);
 	--content-max-width: 1200px;
 }
 
-.accent-color-text {
+.accent-gradient-text {
 	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
-.accent-color-text-hover:hover {
+.accent-gradient-text-hover:hover {
 	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
-.accent-color-background {
+.accent-gradient-background {
 	background: linear-gradient(135deg, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
 }
 
@@ -46,4 +48,19 @@
 
 .page-main-header {
 	font-size: 40px;
+}
+
+.no-user-select {
+	user-select: none;
+	-moz-user-select: none;
+}
+
+.clickable {
+	cursor: pointer;
+	user-select: none;
+	-moz-user-select: none;
+}
+
+.accent-link {
+	color: var(--accent-color);
 }

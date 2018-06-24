@@ -1,5 +1,5 @@
 .cool-searchbar-main {
-	max-width: 800px;
+	max-width: 950px;
 	padding-bottom: 20px;
 }
 
@@ -12,7 +12,7 @@
 	max-width: 520px;
 	border-bottom-style: solid;
 	border-bottom-width: 2px;
-	border-bottom-color: rgb(200, 200, 200);
+	border-bottom-color: var(--default-gray);
 }
 
 .cool-searchbar-input {
@@ -32,23 +32,27 @@
 	font-size: 14px;
 	width: 100px;
 	height: 30px;
-	cursor: pointer;
 	border-style: solid;
-	border-color: rgb(100, 100, 100);
-	border-width: 1px;
+	border-color: var(--default-gray);
+	border-width: 2px;
 	margin-right: 8px;
 	overflow: hidden;
 	text-align: center;
-	line-height: 28px;
+	line-height: 26px;
 	border-radius: 3px;
 }
 
 .provider-selector-card-active {
-	color: rgb(230, 230, 230);
+	color: var(--default-white);
 	background-color: var(--accent-color);
 	border-color: var(--accent-color);
 }
 
 .provider-selector-card-inactive:hover {
-	background-color: var(--accent-color-20);
+	border-color: var(--accent-color);
+}
+
+.recent-searches-entry {
+	display: flex;
+	margin-top: 8px;
 }

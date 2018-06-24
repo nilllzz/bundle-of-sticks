@@ -1,5 +1,5 @@
 .shell-main-content {
-	background-color: rgb(230, 230, 230);
+	background-color: var(--default-white);
 	display: flex;
 	justify-content: center;
 	min-height: 80vh;

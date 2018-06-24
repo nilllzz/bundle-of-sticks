@@ -43,7 +43,7 @@ export default class ProviderSelector extends React.Component<ProviderSelectorPr
 							id={'provider-selector-' + p.id}
 							key={p.id}
 							className={
-								'provider-selector-card' +
+								'provider-selector-card clickable' +
 								(this.isProviderActive(p.id)
 									? ' provider-selector-card-active'
 									: ' provider-selector-card-inactive')
