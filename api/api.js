@@ -26,8 +26,16 @@ function defineSearch(expressApp) {
 			return;
 		}
 		const query = decodeURIComponent(request.query.q);
+		let providers = request.query.providers;
+		if (providers !== undefined) {
+			if (providers.length === 0) {
+				providers = undefined;
+			} else {
+				providers = providers.split(',');
+			}
+		}
 
-		const results = await SourceHelper.search(query);
+		const results = await SourceHelper.search(query, providers);
 		HttpHelper.respond(response, 200, results);
 	});
 }
