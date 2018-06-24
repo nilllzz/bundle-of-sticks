@@ -1,6 +1,9 @@
 :root {
 	--main-bg-color: rgb(32, 35, 42);
 	--accent-color: rgb(231, 115, 61);
+	--accent-color-50: rgb(231, 115, 61, 0.5);
+	--accent-color-20: rgb(231, 115, 61, 0.2);
+	--secondary-color-50: rgb(184, 70, 148, 0.5);
 	--content-max-width: 1200px;
 }
 

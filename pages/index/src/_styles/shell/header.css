@@ -1,6 +1,7 @@
 .shell-header-title {
 	color: rgb(220, 220, 220);
 	font-size: 28;
+	font-weight: bold;
 }
 
 .shell-header-inner {

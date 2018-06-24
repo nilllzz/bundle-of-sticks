@@ -5,7 +5,9 @@ export default class NotFoundPage extends React.Component<any, any> {
 		return (
 			<div className="not-found-main shell-content-padded">
 				<div className="not-found-inner">
-					<h1 className="accent-color-text">404</h1>
+					<div className="accent-color-text page-main-header">
+						<b>404</b>
+					</div>
 					<div className="not-found-img-container">
 						<div className="not-found-img" />
 					</div>

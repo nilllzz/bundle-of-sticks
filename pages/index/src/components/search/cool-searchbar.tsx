@@ -1,20 +1,26 @@
 import * as React from 'react';
+import { Collapse, Fade } from 'react-bootstrap';
+import ProviderSelector, { ProviderSelectorProps } from './provider-selector';
+import { Provider } from '../../app/providers';
 
 type CoolSearchbarState = {
 	clicked: boolean;
+	showProviderSelector: boolean;
 };
 
-type CoolSearchbarProps = {
+type CoolSearchbarProps = ProviderSelectorProps & {
 	onSearch: (query: string) => void;
 	text: string;
 	highlight: string;
 };
 
 export default class CoolSearchbar extends React.Component<CoolSearchbarProps, CoolSearchbarState> {
+	readonly providers: Provider[];
+
 	constructor(props: CoolSearchbarProps) {
 		super(props);
 
-		this.state = { clicked: false };
+		this.state = { clicked: false, showProviderSelector: false };
 
 		this.onClick = this.onClick.bind(this);
 		this.onUnFocus = this.onUnFocus.bind(this);
@@ -22,7 +28,7 @@ export default class CoolSearchbar extends React.Component<CoolSearchbarProps, C
 	}
 
 	private onClick() {
-		this.setState({ clicked: true }, () => {
+		this.setState({ clicked: true, showProviderSelector: true }, () => {
 			const inputElement = document.getElementById('cool-searchbar');
 			inputElement.focus();
 		});
@@ -48,6 +54,7 @@ export default class CoolSearchbar extends React.Component<CoolSearchbarProps, C
 				inputElement.blur();
 				this.setState({
 					clicked: false,
+					showProviderSelector: false,
 				});
 			}
 		}
@@ -72,6 +79,15 @@ export default class CoolSearchbar extends React.Component<CoolSearchbarProps, C
 						/>
 					</div>
 				)}
+				<Collapse in={this.state.showProviderSelector}>
+					<div>
+						<ProviderSelector
+							providers={this.props.providers}
+							updateActiveProviders={this.props.updateActiveProviders}
+							activeProviders={this.props.activeProviders}
+						/>{' '}
+					</div>
+				</Collapse>
 			</div>
 		);
 	}

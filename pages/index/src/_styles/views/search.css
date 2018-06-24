@@ -1,5 +1,6 @@
 .cool-searchbar-main {
 	max-width: 800px;
+	padding-bottom: 20px;
 }
 
 .cool-searchbar-placeholder {
@@ -18,5 +19,36 @@
 	background-color: transparent;
 	font-size: 40px;
 	width: 100%;
-	font-weight: bold;
+}
+
+.provider-selector-main {
+	display: flex;
+	align-items: center;
+	height: 50px;
+}
+
+.provider-selector-card {
+	transition: all 0.1s ease-in-out;
+	font-size: 14px;
+	width: 100px;
+	height: 30px;
+	cursor: pointer;
+	border-style: solid;
+	border-color: rgb(100, 100, 100);
+	border-width: 1px;
+	margin-right: 8px;
+	overflow: hidden;
+	text-align: center;
+	line-height: 28px;
+	border-radius: 3px;
+}
+
+.provider-selector-card-active {
+	color: rgb(230, 230, 230);
+	background-color: var(--accent-color);
+	border-color: var(--accent-color);
+}
+
+.provider-selector-card-inactive:hover {
+	background-color: var(--accent-color-20);
 }

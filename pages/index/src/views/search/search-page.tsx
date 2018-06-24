@@ -3,32 +3,65 @@ import * as qs from 'query-string';
 import Manga from '../../app/models/manga.model';
 import { Api } from '../../app/api';
 import SearchResult from '../../components/search/search-result';
-import CoolSearchbar from './cool-searchbar';
+import CoolSearchbar from '../../components/search/cool-searchbar';
 import { Link } from 'react-router-dom';
+import RecentSearches from '../../components/search/recent-searches';
+import ProviderSelector from '../../components/search/provider-selector';
+import { Provider } from '../../app/providers';
+import Providers from '../../app/providers';
+import LocalState from '../../app/local-state';
 
 type SearchPageState = {
 	nextQuery: string | null;
-	lastSearchQuery: string | null;
+	lastSearchQuery: string;
 	results: Manga[] | null;
 	loading: boolean;
+	activeProviders: string[];
 };
 
 export default class SearchPage extends React.Component<any, SearchPageState> {
+	readonly providers: Provider[];
+
 	constructor(props: any) {
 		super(props);
 
-		this.state = { nextQuery: null, lastSearchQuery: null, results: null, loading: true };
+		this.providers = Providers.getList();
+
+		const selectedProviders = LocalState.readDefault(
+			'selected-providers',
+			this.providers.map(p => p.id)
+		) as string[];
+
+		this.state = {
+			lastSearchQuery: undefined,
+			results: null,
+			loading: false,
+			activeProviders: selectedProviders,
+			nextQuery: null,
+		};
 
 		this.onSearchbarSearch = this.onSearchbarSearch.bind(this);
+		this.onUpdateActiveProviders = this.onUpdateActiveProviders.bind(this);
 	}
 
 	async componentDidMount() {
-		await this.search();
+		const query = this.getQuery();
+		if (query !== undefined) {
+			await this.search();
+		}
 	}
 
 	async componentDidUpdate(_: any, prevState: SearchPageState) {
-		if (!prevState.loading && !this.state.loading) {
-			await this.search();
+		const query = this.getQuery();
+		if (this.state.lastSearchQuery !== query && prevState.lastSearchQuery !== query) {
+			if (query === undefined) {
+				this.setState({
+					loading: false,
+					lastSearchQuery: undefined,
+				});
+			} else {
+				await this.search();
+			}
 		}
 	}
 
@@ -38,32 +71,27 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 
 	private async search() {
 		const query = this.getQuery();
-		if (this.state.nextQuery && this.state.nextQuery !== query) {
-			return;
-		}
-		if (query === undefined) {
-			this.setState({
-				loading: false,
-				results: [],
-				lastSearchQuery: null,
-			});
-		} else if (this.state.lastSearchQuery === null || this.state.lastSearchQuery !== query) {
-			this.setState(
-				{
-					loading: true,
-				},
-				async () => {
-					const response = await Api.sendRequest('/api/search?q=' + query);
-					const mangas = Manga.populate(response.data);
 
-					this.setState({
-						results: mangas,
-						lastSearchQuery: query,
-						loading: false,
-					});
-				}
-			);
-		}
+		this.setState(
+			{
+				lastSearchQuery: query,
+				loading: true,
+			},
+			async () => {
+				const providers = this.state.activeProviders.join(',');
+				const response = await Api.getRequest('/api/search', {
+					q: query,
+					providers: providers,
+				});
+				const mangas = Manga.populate(response.data);
+
+				this.setState({
+					results: mangas,
+					lastSearchQuery: query,
+					loading: false,
+				});
+			}
+		);
 	}
 
 	private onSearchbarSearch(query: string) {
@@ -90,8 +118,15 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 		}
 	}
 
+	private onUpdateActiveProviders(activeProviders: string[]) {
+		LocalState.write('selected-providers', activeProviders);
+		this.setState({
+			activeProviders: activeProviders,
+		});
+	}
+
 	private renderContent() {
-		if (this.state.lastSearchQuery === null && !this.state.loading) {
+		if (this.state.lastSearchQuery === undefined && !this.state.loading) {
 			// user has not searched for anything through the search bar, display latest searches instead
 			return (
 				<div className="search-page-content">
@@ -99,7 +134,13 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 						onSearch={this.onSearchbarSearch}
 						text="Click to "
 						highlight="search"
+						updateActiveProviders={this.onUpdateActiveProviders}
+						activeProviders={this.state.activeProviders}
+						providers={this.providers}
 					/>
+					<div className="search-page-recent">
+						<RecentSearches />
+					</div>
 				</div>
 			);
 		} else {
@@ -110,6 +151,9 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 						onSearch={this.onSearchbarSearch}
 						text="Search results for "
 						highlight={query}
+						updateActiveProviders={this.onUpdateActiveProviders}
+						activeProviders={this.state.activeProviders}
+						providers={this.providers}
 					/>
 					<div className="search-page-results">{this.renderSearchResults()}</div>
 				</div>
