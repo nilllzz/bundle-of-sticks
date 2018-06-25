@@ -1,22 +1,23 @@
 {
-  "name": "bundle-of-sticks",
-  "version": "1.0.0",
-  "description": "Real gud Manga reader",
-  "main": "index.js",
-  "scripts": {
-    "build": "cd pages/index && npm run build && npm run css"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:nilllzz/bundle-of-sticks.git"
-  },
-  "author": "nilllzz",
-  "license": "MIT",
-  "bugs": "https://github.com/nilllzz/bundle-of-sticks/issues",
-  "homepage": "https://github.com/nilllzz/bundle-of-sticks#README",
-  "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "express": "^4.16.1",
-    "jsdom": "^11.11.0"
-  }
+	"name": "bundle-of-sticks",
+	"version": "1.0.0",
+	"description": "Real gud Manga reader",
+	"main": "index.js",
+	"scripts": {
+		"build": "cd pages/index && npm run build && npm run css",
+		"start": "npm install && cd pages/index && npm install && cd ../.. && npm run build && node index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:nilllzz/bundle-of-sticks.git"
+	},
+	"author": "nilllzz",
+	"license": "MIT",
+	"bugs": "https://github.com/nilllzz/bundle-of-sticks/issues",
+	"homepage": "https://github.com/nilllzz/bundle-of-sticks#README",
+	"dependencies": {
+		"babel-polyfill": "^6.26.0",
+		"express": "^4.16.1",
+		"jsdom": "^11.11.0"
+	}
 }
