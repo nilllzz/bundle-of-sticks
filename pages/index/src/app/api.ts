@@ -36,7 +36,7 @@ export class Api {
 			var xhr = new XMLHttpRequest();
 
 			xhr.onload = e => {
-				const response = JSON.parse(xhr.responseText);
+				const response = JSON.parse(xhr.responseText.replace(/&amp;/g, '&'));
 				resolve(response);
 			};
 			console.log('Api request to', url);

@@ -2,6 +2,7 @@ import * as React from 'react';
 import Footer from './footer';
 import Header from './header';
 import Nav from '../../components/nav/nav';
+import Growls from './growls';
 
 export default class Shell extends React.Component<any, any> {
 	public render() {
@@ -20,6 +21,7 @@ export default class Shell extends React.Component<any, any> {
 					</div>
 				</div>
 				<Footer />
+				<Growls />
 			</div>
 		);
 	}

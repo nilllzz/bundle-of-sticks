@@ -14,6 +14,10 @@ export default class Manga extends BaseModel {
 			this.host = new Host(data.host);
 		}
 	}
+
+	public getUrl() {
+		return '/manga/' + this.host.getProvider().id + '/' + encodeURIComponent(this.link);
+	}
 }
 
 BaseModel.create(Manga);

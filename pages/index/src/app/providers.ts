@@ -2,30 +2,34 @@ export type Provider = {
 	name: string;
 	id: string;
 	url: string;
-	initial: string;
+	searchDelay: number; // ms
 };
 
 export default class Providers {
-	static getList(): Provider[] {
+	public static getList(): Provider[] {
 		return [
 			{
 				name: 'Manga Here',
 				id: 'mangaherecc',
 				url: 'www.mangahere.cc',
-				initial: 'H',
+				searchDelay: 5500,
 			},
 			{
 				name: 'Manga Fox',
 				id: 'mangafoxnet',
 				url: 'fanfox.net/',
-				initial: 'F',
+				searchDelay: 0,
 			},
 			{
 				name: 'Manga Park',
 				id: 'mangaparkme',
 				url: 'www.mangapark.me',
-				initial: 'P',
+				searchDelay: 0,
 			},
 		];
+	}
+
+	public static getProvider(id: string) {
+		return this.getList().find(p => p.id === id);
 	}
 }

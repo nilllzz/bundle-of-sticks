@@ -6,6 +6,7 @@
 	--secondary-color: rgb(179, 89, 48);
 	--default-white: rgb(230, 230, 230);
 	--default-gray: rgb(200, 200, 200);
+	--shadow-color: rgb(0, 0, 0, 0.5);
 	--content-max-width: 1200px;
 }
 
@@ -61,6 +62,6 @@
 	-moz-user-select: none;
 }
 
-.accent-link {
+.accent-color-text {
 	color: var(--accent-color);
 }

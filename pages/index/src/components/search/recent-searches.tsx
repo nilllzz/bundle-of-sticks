@@ -66,7 +66,7 @@ export default class RecentSearches extends React.Component<any, RecentSearchesS
 						<div className="recent-searches-entry" key={s.date.toString()}>
 							<Link
 								to={'/search?query=' + s.query}
-								className="recent-searches-entry-link accent-link unstyled-link"
+								className="recent-searches-entry-link accent-color-text unstyled-link"
 							>
 								{s.query}
 							</Link>

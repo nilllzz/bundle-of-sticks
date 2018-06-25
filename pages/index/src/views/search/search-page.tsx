@@ -13,9 +13,11 @@ import AppLoading from '../../components/app/app-loading';
 type SearchPageState = {
 	nextQuery: string | null;
 	lastSearchQuery: string;
+	lastSearchTime: number | null;
 	results: Manga[] | null;
 	loading: boolean;
 	activeProviders: string[];
+	showProvidersInResults: boolean;
 };
 
 export default class SearchPage extends React.Component<any, SearchPageState> {
@@ -37,6 +39,8 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			loading: false,
 			activeProviders: selectedProviders,
 			nextQuery: null,
+			lastSearchTime: null,
+			showProvidersInResults: true,
 		};
 
 		this.onUpdateActiveProviders = this.onUpdateActiveProviders.bind(this);
@@ -78,6 +82,19 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 				loading: true,
 			},
 			async () => {
+				const longestDelay = Math.max(
+					...this.providers
+						.filter(p => this.state.activeProviders.includes(p.id))
+						.map(p => p.searchDelay)
+				);
+
+				const min = this.state.lastSearchTime + longestDelay;
+				const diff = min - Date.now();
+				if (diff > 0) {
+					console.log('wait for seconds', diff / 1000);
+					await new Promise((resolve, _) => setTimeout(() => resolve(), diff));
+				}
+
 				const providers = this.state.activeProviders.join(',');
 				const response = await Api.getRequest('/api/search', {
 					q: query,
@@ -89,6 +106,8 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 					results: mangas,
 					lastSearchQuery: query,
 					loading: false,
+					lastSearchTime: Date.now(),
+					showProvidersInResults: this.state.activeProviders.length !== 1,
 				});
 			}
 		);
@@ -101,7 +120,13 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			if (!this.state.results || this.state.results.length === 0) {
 				return <div>No results.</div>;
 			} else {
-				return this.state.results.map(r => <SearchResult key={r.link} manga={r} />);
+				return this.state.results.map(r => (
+					<SearchResult
+						key={r.link}
+						manga={r}
+						showProvider={this.state.showProvidersInResults}
+					/>
+				));
 			}
 		}
 	}

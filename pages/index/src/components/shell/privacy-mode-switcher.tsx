@@ -27,16 +27,16 @@ export default class PrivacyModeSwitcher extends React.Component<any, PrivacyMod
 		let tooltip;
 		if (this.state.active) {
 			tooltip = (
-				<Tooltip>
+				<Tooltip id="privacy-mode-engaged-tooltip">
 					<strong className="accent-gradient-text">Privacy mode engaged</strong>
 					<br />p-please don't b-bully me, Mr. NSA man
 				</Tooltip>
 			);
 		} else {
 			tooltip = (
-				<Tooltip>
+				<Tooltip id="privacy-mode-disengaged-tooltip">
 					<strong>Privacy mode NOT engaged</strong>
-					<br />just like you aren't.
+					<br />just like you aren't
 				</Tooltip>
 			);
 		}

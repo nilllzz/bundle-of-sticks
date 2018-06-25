@@ -12,9 +12,7 @@ export default class AppButton extends React.Component<AppButtonProps, any> {
 			<div className="app-button clickable" onClick={this.props.onClick}>
 				{this.props.icon ? (
 					<Glyphicon className="app-button-icon" glyph={this.props.icon} />
-				) : (
-					<div />
-				)}
+				) : null}
 				{this.props.children}
 			</div>
 		);
