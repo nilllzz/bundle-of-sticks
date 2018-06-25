@@ -87,7 +87,9 @@ module.exports = class MangaHere {
 			if (summary.endsWith('Show less')) {
 				summary = summary.substring(0, summary.length - 10);
 			}
-			info.summary = summary;
+			if (summary.length > 0) {
+				info.summary = summary;
+			}
 		}
 
 		// get: authors, artists, completion status, genres
