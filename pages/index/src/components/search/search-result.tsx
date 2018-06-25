@@ -28,7 +28,7 @@ export default class SearchResult extends React.Component<SearchResultProps, any
 
 			Growls.add(
 				'Bookmark added',
-				'Find ' + this.props.manga.name + ' in your bookmarks section',
+				'Find ' + this.props.manga.name + ' in your collection',
 				3000
 			);
 		} else {

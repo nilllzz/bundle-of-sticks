@@ -5,18 +5,27 @@ import MangaRating from '../../components/manga/manga-rating';
 import { Link } from 'react-router-dom';
 import { Glyphicon } from 'react-bootstrap';
 import Bookmarks from '../../app/bookmarks';
+import Manga from '../../app/models/manga.model';
+import AppSeparator from '../../components/app/app-separator';
+import Growls from '../shell/growls';
 
 type MangaViewPageState = {
 	info: Info;
 	loading: boolean;
 	imgError: boolean;
+	hasBookmark: boolean;
 };
 
 export default class MangaViewPage extends React.Component<any, MangaViewPageState> {
 	constructor(props: any) {
 		super(props);
 
-		this.state = { info: null, loading: true, imgError: false };
+		this.state = {
+			info: null,
+			loading: true,
+			imgError: false,
+			hasBookmark: false,
+		};
 
 		this.onImgLoadError = this.onImgLoadError.bind(this);
 		this.toggleBookmark = this.toggleBookmark.bind(this);
@@ -32,7 +41,13 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		this.setState({
 			info: info,
 			loading: false,
+			hasBookmark: this.hasBookmark(info.manga),
 		});
+	}
+
+	private hasBookmark(manga: Manga) {
+		const bookmark = Bookmarks.createManga(manga);
+		return Bookmarks.hasBookmark(bookmark);
 	}
 
 	private onImgLoadError() {
@@ -41,7 +56,23 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		});
 	}
 
-	private toggleBookmark() {}
+	private toggleBookmark() {
+		const bookmark = Bookmarks.createManga(this.state.info.manga);
+		if (!Bookmarks.hasBookmark(bookmark)) {
+			Bookmarks.addBookmark(bookmark);
+			Growls.add(
+				'Bookmark added',
+				'Find ' + this.state.info.manga.name + ' in your collection',
+				3000
+			);
+		} else {
+			Bookmarks.removeBookmark(bookmark);
+			Growls.add('Bookmark removed');
+		}
+		this.setState({
+			hasBookmark: this.hasBookmark(this.state.info.manga),
+		});
+	}
 
 	public render() {
 		if (this.state.loading) {
@@ -72,40 +103,53 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 
 		const authorElements = [];
 		if (this.state.info.authors.length === 0) {
-			authorElements.push(<span className="text-muted">Unknown</span>);
+			authorElements.push(
+				<span className="text-muted" key="0">
+					Unknown
+				</span>
+			);
 		} else {
 			for (let i = 0; i < this.state.info.authors.length; i++) {
 				const author = this.state.info.authors[i];
 				authorElements.push(
-					<Link to={author.getUrl()} className="accent-color-text unstyled-link">
+					<Link
+						to={author.getUrl()}
+						className="accent-color-text unstyled-link"
+						key={author.link}
+					>
 						{author.name}
 					</Link>
 				);
 				if (i < this.state.info.authors.length - 1) {
-					authorElements.push(<span>{', '}</span>);
+					authorElements.push(<AppSeparator key={author.name + 'separator'} />);
 				}
 			}
 		}
 
 		const artistElements = [];
 		if (this.state.info.artists.length === 0) {
-			artistElements.push(<span className="text-muted">Unknown</span>);
+			artistElements.push(
+				<span className="text-muted" key="0">
+					Unknown
+				</span>
+			);
 		} else {
 			for (let i = 0; i < this.state.info.artists.length; i++) {
 				const artist = this.state.info.artists[i];
 				artistElements.push(
-					<Link to={artist.getUrl()} className="accent-color-text unstyled-link">
+					<Link
+						to={artist.getUrl()}
+						className="accent-color-text unstyled-link"
+						key={artist.link}
+					>
 						{artist.name}
 					</Link>
 				);
 				if (i < this.state.info.artists.length - 1) {
-					artistElements.push(<span>{', '}</span>);
+					artistElements.push(<AppSeparator key={artist.name + 'separator'} />);
 				}
 			}
 		}
-
-		const bookmark = Bookmarks.createManga(this.state.info.manga);
-		const hasBookmark = Bookmarks.hasBookmark(bookmark);
 
 		return (
 			<div className="manga-view-page-main shell-content-padded">
@@ -125,7 +169,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 							<div
 								className={
 									'manga-view-page-bookmark clickable' +
-									(hasBookmark ? ' accent-color-text' : '')
+									(this.state.hasBookmark ? ' accent-color-text' : '')
 								}
 								onClick={this.toggleBookmark}
 							>
@@ -135,11 +179,15 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 						<div className="manga-view-page-info">
 							<MangaRating rating={this.state.info.rating} />
 							<div className="manga-view-page-authors manga-view-page-info-element">
-								<div className="manga-view-page-info-title">Authors:</div>
+								<div className="manga-view-page-info-title">
+									{'Author' + (authorElements.length > 1 ? 's' : '')}:
+								</div>
 								{authorElements}
 							</div>
 							<div className="manga-view-page-artists manga-view-page-info-element">
-								<div className="manga-view-page-info-title">Artists:</div>
+								<div className="manga-view-page-info-title">
+									{'Artist' + (authorElements.length > 1 ? 's' : '')}:
+								</div>
 								{artistElements}
 							</div>
 							<div className="manga-view-page-genres manga-view-page-info-element">
