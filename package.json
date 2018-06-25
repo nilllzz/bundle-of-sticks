@@ -4,7 +4,7 @@
 	"description": "Real gud Manga reader",
 	"main": "index.js",
 	"scripts": {
-		"build": "cd pages/index && npm run build && npm run css",
+		"build": "npm install && cd pages/index && npm install && npm run build && npm run css",
 		"start": "npm install && cd pages/index && npm install && cd ../.. && npm run build && node index.js"
 	},
 	"repository": {
