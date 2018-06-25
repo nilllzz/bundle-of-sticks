@@ -7,7 +7,11 @@
 	--default-white: rgb(230, 230, 230);
 	--default-gray: rgb(200, 200, 200);
 	--shadow-color: rgb(0, 0, 0, 0.5);
+	--muted-color: rgb(150, 150, 150);
+
 	--content-max-width: 1200px;
+	--header-height: 60px;
+	--footer-height: 118px;
 }
 
 .accent-gradient-text {
@@ -64,4 +68,32 @@
 
 .accent-color-text {
 	color: var(--accent-color);
+}
+
+.text-muted {
+	color: var(--muted-color);
+}
+
+.content-placeholder {
+	animation: placeholder-gradient 1.5s ease infinite;
+	border-radius: 3px;
+	background: linear-gradient(
+		to right,
+		var(--default-white) 0%,
+		var(--default-gray),
+		var(--default-white) 100%
+	);
+	background-size: 400% 400%;
+}
+
+@keyframes placeholder-gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }

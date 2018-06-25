@@ -1,0 +1,130 @@
+.manga-view-page-title {
+	min-height: 60px;
+}
+
+.manga-view-page-title-placeholder {
+	width: 50%;
+	height: 55px;
+}
+
+.manga-view-page-body {
+	margin-top: 20px;
+}
+
+.manga-view-page-upper {
+	display: flex;
+}
+
+.manga-view-page-coverimg {
+	min-width: 200px;
+	width: 200px;
+	height: 310px;
+	border-radius: 3px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.manga-view-page-coverimg img {
+	border-radius: 3px;
+	width: 100%;
+	height: 100%;
+}
+
+.manga-view-page-coverimg-fail {
+	font-size: 24px;
+	color: var(--default-white);
+	font-weight: bold;
+}
+
+.manga-view-page-coverimg-placeholder {
+	min-width: 200px;
+	width: 200px;
+	height: 310px;
+	border-radius: 3px;
+}
+
+.manga-view-page-bookmark {
+	position: absolute;
+	top: -5px;
+	left: 10px;
+	font-size: 32px;
+	text-shadow: 1px 1px 3px var(--shadow-color);
+}
+
+.manga-view-page-info {
+	margin-left: 40px;
+	min-width: 300px;
+	max-width: 650px;
+	width: 100%;
+}
+
+.manga-view-page-rating-placeholder {
+	width: 50%;
+	height: 50px;
+	margin-bottom: 20px;
+}
+
+.manga-view-page-info-placeholder {
+	width: 80%;
+	height: 25px;
+	margin-bottom: 20px;
+}
+
+.manga-view-page-info-element {
+	margin-bottom: 20px;
+	height: 25px;
+	display: flex;
+}
+
+.manga-view-page-info-title {
+	width: 60px;
+}
+
+.manga-view-page-lower {
+	margin-top: 40px;
+	max-width: 890px;
+	width: 100%;
+	display: flex;
+}
+
+.manga-view-page-summary-placeholder {
+	width: 85%;
+	height: 125px;
+}
+
+.manga-view-page-summary {
+	width: 85%;
+}
+
+.manga-rating-main {
+	height: 50px;
+	max-width: 400px;
+	font-size: 48px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.manga-rating-stars {
+	display: inline;
+	position: relative;
+	-webkit-text-fill-color: transparent;
+	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+	background-clip: text;
+	background-repeat: no-repeat;
+}
+
+.manga-rating-score {
+	margin-left: 20px;
+}
+
+.manga-rating-score-big {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.manga-rating-score-small {
+	font-size: 22px;
+}

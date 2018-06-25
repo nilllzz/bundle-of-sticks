@@ -77,7 +77,7 @@ module.exports = class MangaHere {
 		const ratingContainer = dom.window.document.getElementById('current_rating');
 		const ratingText = ratingContainer.textContent;
 		if (ratingText) {
-			info.rating = Number.parseFloat(ratingText) / 5;
+			info.rating = Math.min(Number.parseFloat(ratingText) / 5, 1);
 		}
 
 		// summary
@@ -137,8 +137,10 @@ module.exports = class MangaHere {
 					case 'Status:':
 						let statusText = li.textContent;
 						statusText = statusText.substr(7); // cut away "Status:"
-						if (statusText.includes(' ')) {
-							statusText = statusText.substring(0, statusText.indexOf(' ') - 2); // cut away stuff after status str
+						// space used is the char at 160: non-breaking-space
+						const space = String.fromCharCode(160);
+						if (statusText.includes(space)) {
+							statusText = statusText.substring(0, statusText.indexOf(space)); // cut away stuff after status str
 						}
 						info.completionStatus = statusText;
 						break;
@@ -146,7 +148,11 @@ module.exports = class MangaHere {
 						let genreText = li.textContent;
 						genreText = genreText.substr(9); // cut away "Genre(s):"
 						const genres = genreText.split(',').map(g => g.trim());
-						info.genres = genres;
+						if (genres.length === 1 && genres[0] === 'None') {
+							info.genres = [];
+						} else {
+							info.genres = genres;
+						}
 						break;
 				}
 			}

@@ -2,7 +2,7 @@
 	background-color: var(--default-white);
 	display: flex;
 	justify-content: center;
-	min-height: 80vh;
+	min-height: calc(100vh - var(--footer-height) - var(--header-height));
 }
 
 .shell-split-content {

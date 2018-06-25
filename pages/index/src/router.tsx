@@ -4,6 +4,7 @@ import HomePage from './views/home/home-page';
 import Shell from './views/shell/main';
 import NotFoundPage from './views/not-found/not-found-page';
 import SearchPage from './views/search/search-page';
+import MangaViewPage from './views/manga/manga-view-page';
 
 export default class PageRouter extends React.Component<any, any> {
 	constructor(props: any) {
@@ -18,6 +19,7 @@ export default class PageRouter extends React.Component<any, any> {
 						<Switch>
 							<Route path="/" exact component={HomePage} />
 							<Route path="/search" component={SearchPage} />
+							<Route path="/manga/:provider/:link" component={MangaViewPage} />
 							<Route component={NotFoundPage} />
 						</Switch>
 					</Shell>

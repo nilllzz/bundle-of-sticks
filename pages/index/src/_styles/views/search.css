@@ -76,6 +76,10 @@
 	border-color: var(--default-gray);
 }
 
+.search-result-main:active {
+	background-color: var(--default-gray);
+}
+
 .search-result-title {
 	font-size: 16px;
 }
