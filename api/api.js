@@ -4,6 +4,7 @@ const SourceHelper = require('./sources/source-helper');
 module.exports = function defineApi(expressApp) {
 	defineSearch(expressApp);
 	defineChapters(expressApp);
+	defineInfo(expressApp);
 };
 
 function requireQueryParams(request, params) {
@@ -43,7 +44,7 @@ function defineSearch(expressApp) {
 function defineChapters(expressApp) {
 	expressApp.get('/api/manga/chapters', async function(request, response) {
 		if (!requireQueryParams(request, ['host', 'manga'])) {
-			HttpHelper.respond(response, 200, []);
+			HttpHelper.respond(response, 400);
 			return;
 		}
 
@@ -52,5 +53,20 @@ function defineChapters(expressApp) {
 
 		const chapters = await SourceHelper.getChapters(hostId, mangaLink);
 		HttpHelper.respond(response, 200, chapters);
+	});
+}
+
+function defineInfo(expressApp) {
+	expressApp.get('/api/manga/info', async function(request, response) {
+		if (!requireQueryParams(request, ['host', 'manga'])) {
+			HttpHelper.respond(response, 400);
+			return;
+		}
+
+		const hostId = decodeURIComponent(request.query.host);
+		const mangaLink = decodeURIComponent(request.query.manga);
+
+		const info = await SourceHelper.getInfo(hostId, mangaLink);
+		HttpHelper.respond(response, 200, info);
 	});
 }

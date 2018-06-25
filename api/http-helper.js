@@ -1,5 +1,5 @@
 module.exports = class HttpHelper {
-	static respond(response, code, data) {
+	static respond(response, code, data = '') {
 		let success = false;
 		if (code >= 200 && code < 300) {
 			success = true;

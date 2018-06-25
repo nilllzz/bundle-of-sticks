@@ -12,8 +12,16 @@ module.exports = class SourceHelper {
 	}
 
 	static async getChapters(hostId, mangaLink) {
-		if (hostId === MangaHere.id) {
-			return await MangaHere.getChapters(mangaLink);
+		switch (hostId) {
+			case MangaHere.id:
+				return await MangaHere.getChapters(mangaLink);
+		}
+	}
+
+	static async getInfo(hostId, mangaLink) {
+		switch (hostId) {
+			case MangaHere.id:
+				return await MangaHere.getInfo(mangaLink);
 		}
 	}
 };

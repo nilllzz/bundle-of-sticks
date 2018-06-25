@@ -16,6 +16,10 @@ module.exports = class MangaHere {
 		};
 	}
 
+	static getPathFromLink(link) {
+		return link.substr(link.indexOf('.cc/') + 3);
+	}
+
 	static async search(query) {
 		const result = await HttpHelper.get(HOST, 80, '/search.php?name=' + query);
 		const results = [];
@@ -28,7 +32,7 @@ module.exports = class MangaHere {
 			for (const element of elements) {
 				const title = element.innerHTML.trim();
 				const link = element.getAttribute('href');
-				const path = link.substr(link.indexOf('.cc/') + 3);
+				const path = this.getPathFromLink(link);
 
 				results.push({
 					name: title,
@@ -39,6 +43,114 @@ module.exports = class MangaHere {
 		}
 
 		return results;
+	}
+
+	static async getInfo(mangaLink) {
+		const result = await HttpHelper.get(HOST, 80, mangaLink);
+		const dom = new JSDOM(result.body);
+
+		const contentSection = dom.window.document.getElementById('main');
+		const title = contentSection.getElementsByClassName('title')[0].textContent;
+		// return manga info too
+		const manga = {
+			name: title,
+			link: mangaLink,
+			host: MangaHere.hostInfo,
+		};
+
+		const info = {
+			manga: manga,
+			coverImg: null,
+			rating: -1,
+			artists: null,
+			authors: null,
+			completionStatus: null,
+			genres: null,
+			summary: null,
+		};
+
+		// cover img src
+		const imgElement = contentSection.getElementsByTagName('img')[0];
+		info.coverImg = imgElement.getAttribute('src');
+
+		// rating
+		const ratingContainer = dom.window.document.getElementById('current_rating');
+		const ratingText = ratingContainer.textContent;
+		if (ratingText) {
+			info.rating = Number.parseFloat(ratingText) / 5;
+		}
+
+		// summary
+		const summaryContainer = dom.window.document.getElementById('show');
+		if (summaryContainer) {
+			let summary = summaryContainer.textContent.trim();
+			if (summary.endsWith('Show less')) {
+				summary = summary.substring(0, summary.length - 10);
+			}
+			info.summary = summary;
+		}
+
+		// get: authors, artists, completion status, genres
+		const detailContainer = contentSection.getElementsByClassName('detail_topText')[0];
+		for (const li of detailContainer.children) {
+			if (li.children.length >= 1 && li.children[0].nodeName === 'LABEL') {
+				const labelText = li.children[0].textContent;
+				switch (labelText) {
+					case 'Artist(s):':
+						const artists = [];
+						for (let i = 1; i < li.children.length; i++) {
+							const artistElement = li.children[i];
+
+							const name = artistElement.textContent;
+
+							const link = artistElement.getAttribute('href');
+							const path = this.getPathFromLink(link);
+
+							artists.push({
+								name: name,
+								link: path,
+								host: MangaHere.hostInfo,
+							});
+						}
+						info.artists = artists;
+						break;
+					case 'Author(s):':
+						const authors = [];
+						for (let i = 1; i < li.children.length; i++) {
+							const authorElement = li.children[i];
+
+							const name = authorElement.textContent;
+
+							const link = authorElement.getAttribute('href');
+							const path = this.getPathFromLink(link);
+
+							authors.push({
+								name: name,
+								link: path,
+								host: MangaHere.hostInfo,
+							});
+						}
+						info.authors = authors;
+						break;
+					case 'Status:':
+						let statusText = li.textContent;
+						statusText = statusText.substr(7); // cut away "Status:"
+						if (statusText.includes(' ')) {
+							statusText = statusText.substring(0, statusText.indexOf(' ') - 2); // cut away stuff after status str
+						}
+						info.completionStatus = statusText;
+						break;
+					case 'Genre(s):':
+						let genreText = li.textContent;
+						genreText = genreText.substr(9); // cut away "Genre(s):"
+						const genres = genreText.split(',').map(g => g.trim());
+						info.genres = genres;
+						break;
+				}
+			}
+		}
+
+		return info;
 	}
 
 	static async getChapters(mangaLink) {
@@ -54,7 +166,7 @@ module.exports = class MangaHere {
 			const a = chapterContainer.children[0].children[0];
 			const title = a.innerHTML.trim();
 			const link = a.getAttribute('href');
-			const path = link.substr(link.indexOf('.cc/') + 3);
+			const path = this.getPathFromLink(link);
 
 			const dateContainer = chapterContainer.children[1];
 			const dateStr = dateContainer.innerHTML.trim();
@@ -86,7 +198,7 @@ module.exports = class MangaHere {
 		for (const pageElement of pageElements) {
 			const title = pageElement.innerHTML.trim();
 			const link = pageElement.getAttribute('value');
-			const path = link.substr(link.indexOf('.cc/') + 3);
+			const path = this.getPathFromLink(link);
 
 			pages.push({
 				name: title,
