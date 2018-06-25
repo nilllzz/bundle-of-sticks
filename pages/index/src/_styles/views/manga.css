@@ -110,10 +110,15 @@
 .manga-rating-stars {
 	display: inline;
 	position: relative;
-	-webkit-text-fill-color: transparent;
 	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
-	background-clip: text;
 	background-repeat: no-repeat;
+
+	background-clip: text;
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+
+	-webkit-text-fill-color: transparent;
+	-moz-text-fill-color: transparent;
 }
 
 .manga-rating-score {

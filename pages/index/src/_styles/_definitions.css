@@ -16,14 +16,24 @@
 
 .accent-gradient-text {
 	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+
 	background-clip: text;
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+
 	-webkit-text-fill-color: transparent;
+	-moz-text-fill-color: transparent;
 }
 
 .accent-gradient-text-hover:hover {
 	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+
 	background-clip: text;
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+
 	-webkit-text-fill-color: transparent;
+	-moz-text-fill-color: transparent;
 }
 
 .accent-gradient-background {
@@ -46,8 +56,10 @@
 }
 
 .unstyled-textinput {
+	appearance: none;
 	-moz-appearance: none;
 	-webkit-appearance: none;
+
 	border-style: none;
 }
 
@@ -57,12 +69,15 @@
 
 .no-user-select {
 	user-select: none;
+	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
 .clickable {
 	cursor: pointer;
+
 	user-select: none;
+	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
