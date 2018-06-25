@@ -17,6 +17,7 @@
 .shell-split-content-left {
 	max-width: 200px;
 	width: 30%;
+	display: flex;
 }
 
 .shell-split-content-right {
