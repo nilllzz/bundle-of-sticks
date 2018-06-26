@@ -4,6 +4,7 @@ import Host from './host.model';
 export default class Manga extends BaseModel {
 	name: string;
 	link: string;
+	hot?: boolean;
 
 	host: Host;
 

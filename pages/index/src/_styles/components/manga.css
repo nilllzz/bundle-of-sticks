@@ -1,0 +1,40 @@
+.manga-rating-main {
+	height: 50px;
+	max-width: 400px;
+	font-size: 48px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.manga-rating-stars {
+	display: inline;
+	position: relative;
+	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
+	background-repeat: no-repeat;
+
+	background-clip: text;
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+
+	-webkit-text-fill-color: transparent;
+	-moz-text-fill-color: transparent;
+}
+
+.manga-rating-score {
+	margin-left: 20px;
+}
+
+.manga-rating-score-big {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.manga-rating-score-small {
+	font-size: 22px;
+}
+
+.manga-rating-main-muted {
+	height: 50px;
+	font-size: 24px;
+}

@@ -2,6 +2,7 @@
 @import url('_definitions.css');
 
 @import url('components/app.css');
+@import url('components/manga.css');
 @import url('components/nav.css');
 @import url('shell/footer.css');
 @import url('shell/growls.css');

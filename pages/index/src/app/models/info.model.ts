@@ -9,6 +9,7 @@ export default class Info extends BaseModel {
 	summary: string;
 	rating: number;
 	genres: string[];
+	nsfw: boolean;
 
 	artists: Artist[];
 	authors: Author[];

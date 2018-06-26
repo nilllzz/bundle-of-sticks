@@ -4,12 +4,18 @@ import { Glyphicon } from 'react-bootstrap';
 type AppButtonProps = {
 	onClick?: () => void;
 	icon?: string;
+	main?: boolean;
 };
 
 export default class AppButton extends React.Component<AppButtonProps, any> {
 	public render() {
+		let mainClass = 'app-button clickable';
+		if (this.props.main) {
+			mainClass += ' app-button-main';
+		}
+
 		return (
-			<div className="app-button clickable" onClick={this.props.onClick}>
+			<div className={mainClass} onClick={this.props.onClick}>
 				{this.props.icon ? (
 					<Glyphicon className="app-button-icon" glyph={this.props.icon} />
 				) : null}

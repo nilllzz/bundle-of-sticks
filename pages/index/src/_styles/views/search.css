@@ -84,6 +84,10 @@
 	font-size: 16px;
 }
 
+.search-result-hot {
+	margin-right: 6px;
+}
+
 .search-result-provider {
 	margin-left: 16px;
 }

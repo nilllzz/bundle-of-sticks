@@ -8,12 +8,14 @@ import Bookmarks from '../../app/bookmarks';
 import Manga from '../../app/models/manga.model';
 import AppSeparator from '../../components/app/app-separator';
 import Growls from '../shell/growls';
+import MangaNSFW from './manga-nsfw';
 
 type MangaViewPageState = {
 	info: Info;
 	loading: boolean;
 	imgError: boolean;
 	hasBookmark: boolean;
+	nsfwConfirmed: boolean;
 };
 
 export default class MangaViewPage extends React.Component<any, MangaViewPageState> {
@@ -25,10 +27,12 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 			loading: true,
 			imgError: false,
 			hasBookmark: false,
+			nsfwConfirmed: false,
 		};
 
 		this.onImgLoadError = this.onImgLoadError.bind(this);
 		this.toggleBookmark = this.toggleBookmark.bind(this);
+		this.onContinueNSFW = this.onContinueNSFW.bind(this);
 	}
 
 	async componentDidMount() {
@@ -42,6 +46,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 			info: info,
 			loading: false,
 			hasBookmark: this.hasBookmark(info.manga),
+			imgError: !info.coverImg,
 		});
 	}
 
@@ -74,6 +79,84 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		});
 	}
 
+	private onContinueNSFW() {
+		this.setState({
+			nsfwConfirmed: true,
+		});
+	}
+
+	private renderAuthors() {
+		const authorElements = [];
+		if (!this.state.info.authors || this.state.info.authors.length === 0) {
+			authorElements.push(
+				<span className="text-muted" key="0">
+					Unknown
+				</span>
+			);
+		} else {
+			for (let i = 0; i < this.state.info.authors.length; i++) {
+				const author = this.state.info.authors[i];
+				authorElements.push(
+					<Link
+						to={author.getUrl()}
+						className="accent-color-text unstyled-link"
+						key={author.link}
+					>
+						{author.name}
+					</Link>
+				);
+				if (i < this.state.info.authors.length - 1) {
+					authorElements.push(<AppSeparator key={author.name + 'separator'} />);
+				}
+			}
+		}
+
+		return (
+			<div className="manga-view-page-authors manga-view-page-info-element">
+				<div className="manga-view-page-info-title">
+					{'Author' + (authorElements.length > 1 ? 's' : '')}:
+				</div>
+				{authorElements}
+			</div>
+		);
+	}
+
+	private renderArtists() {
+		const artistElements = [];
+		if (!this.state.info.artists || this.state.info.artists.length === 0) {
+			artistElements.push(
+				<span className="text-muted" key="0">
+					Unknown
+				</span>
+			);
+		} else {
+			for (let i = 0; i < this.state.info.artists.length; i++) {
+				const artist = this.state.info.artists[i];
+				artistElements.push(
+					<Link
+						to={artist.getUrl()}
+						className="accent-color-text unstyled-link"
+						key={artist.link}
+					>
+						{artist.name}
+					</Link>
+				);
+				if (i < this.state.info.artists.length - 1) {
+					artistElements.push(<AppSeparator key={artist.name + 'separator'} />);
+				}
+			}
+		}
+
+		return (
+			<div className="manga-view-page-artists manga-view-page-info-element">
+				<div className="manga-view-page-info-title">
+					{'Artist' + (artistElements.length > 1 ? 's' : '')}:
+				</div>
+				{artistElements}
+			</div>
+		);
+	}
+
 	public render() {
 		if (this.state.loading) {
 			// if it's still loading, render a bunch of placeholders
@@ -101,54 +184,8 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 			);
 		}
 
-		const authorElements = [];
-		if (this.state.info.authors.length === 0) {
-			authorElements.push(
-				<span className="text-muted" key="0">
-					Unknown
-				</span>
-			);
-		} else {
-			for (let i = 0; i < this.state.info.authors.length; i++) {
-				const author = this.state.info.authors[i];
-				authorElements.push(
-					<Link
-						to={author.getUrl()}
-						className="accent-color-text unstyled-link"
-						key={author.link}
-					>
-						{author.name}
-					</Link>
-				);
-				if (i < this.state.info.authors.length - 1) {
-					authorElements.push(<AppSeparator key={author.name + 'separator'} />);
-				}
-			}
-		}
-
-		const artistElements = [];
-		if (this.state.info.artists.length === 0) {
-			artistElements.push(
-				<span className="text-muted" key="0">
-					Unknown
-				</span>
-			);
-		} else {
-			for (let i = 0; i < this.state.info.artists.length; i++) {
-				const artist = this.state.info.artists[i];
-				artistElements.push(
-					<Link
-						to={artist.getUrl()}
-						className="accent-color-text unstyled-link"
-						key={artist.link}
-					>
-						{artist.name}
-					</Link>
-				);
-				if (i < this.state.info.artists.length - 1) {
-					artistElements.push(<AppSeparator key={artist.name + 'separator'} />);
-				}
-			}
+		if (this.state.info.nsfw && !this.state.nsfwConfirmed) {
+			return <MangaNSFW manga={this.state.info.manga} onContinue={this.onContinueNSFW} />;
 		}
 
 		return (
@@ -178,21 +215,11 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 						</div>
 						<div className="manga-view-page-info">
 							<MangaRating rating={this.state.info.rating} />
-							<div className="manga-view-page-authors manga-view-page-info-element">
-								<div className="manga-view-page-info-title">
-									{'Author' + (authorElements.length > 1 ? 's' : '')}:
-								</div>
-								{authorElements}
-							</div>
-							<div className="manga-view-page-artists manga-view-page-info-element">
-								<div className="manga-view-page-info-title">
-									{'Artist' + (authorElements.length > 1 ? 's' : '')}:
-								</div>
-								{artistElements}
-							</div>
+							{this.renderAuthors()}
+							{this.renderArtists()}
 							<div className="manga-view-page-genres manga-view-page-info-element">
 								<div className="manga-view-page-info-title">Genres:</div>
-								{this.state.info.genres.length > 0 ? (
+								{this.state.info.genres && this.state.info.genres.length > 0 ? (
 									this.state.info.genres.join(', ')
 								) : (
 									<span className="text-muted">None</span>
@@ -200,7 +227,11 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 							</div>
 							<div className="manga-view-page-completion-status manga-view-page-info-element">
 								<div className="manga-view-page-info-title">Status:</div>
-								{this.state.info.completionStatus}
+								{this.state.info.completionStatus ? (
+									this.state.info.completionStatus
+								) : (
+									<span className="text-muted">Unknown</span>
+								)}
 							</div>
 						</div>
 					</div>

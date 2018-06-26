@@ -8,7 +8,9 @@ type MangaRatingProps = {
 export default class MangaRating extends React.Component<MangaRatingProps, any> {
 	componentDidMount() {
 		const element = document.getElementById('rating-stars');
-		element.style.backgroundSize = (this.props.rating * 100).toString() + '%';
+		if (element) {
+			element.style.backgroundSize = (this.props.rating * 100).toString() + '%';
+		}
 	}
 
 	private getScoreBig() {
@@ -21,6 +23,13 @@ export default class MangaRating extends React.Component<MangaRatingProps, any> 
 	}
 
 	public render() {
+		if (this.props.rating === -1) {
+			return (
+				<div className="manga-rating-main-muted">
+					<span className="text-muted">No rating available</span>
+				</div>
+			);
+		}
 		return (
 			<div className="manga-rating-main">
 				<div className="manga-rating-stars" id="rating-stars">

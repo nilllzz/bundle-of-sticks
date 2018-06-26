@@ -6,11 +6,11 @@
 	background-color: var(--default-white);
 	display: inline-flex;
 	align-items: center;
-	font-size: 18px;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	padding-left: 16px;
-	padding-right: 16px;
+	font-size: 16px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	padding-right: 8px;
 }
 
 .app-button:hover {
@@ -20,6 +20,11 @@
 
 .app-button:active {
 	background-color: var(--secondary-color);
+}
+
+.app-button-main {
+	background-color: var(--accent-color);
+	color: var(--default-white);
 }
 
 .app-button-icon {

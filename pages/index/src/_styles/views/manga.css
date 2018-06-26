@@ -46,6 +46,7 @@
 }
 
 .manga-view-page-bookmark {
+	transition: all 0.2s ease-in-out;
 	position: absolute;
 	top: -5px;
 	left: 10px;
@@ -98,38 +99,31 @@
 	width: 85%;
 }
 
-.manga-rating-main {
-	height: 50px;
-	max-width: 400px;
-	font-size: 48px;
-	margin-bottom: 20px;
+.manga-nsfw-main {
 	display: flex;
-	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding-top: 100px;
 }
 
-.manga-rating-stars {
-	display: inline;
-	position: relative;
-	background: linear-gradient(to right, rgba(184, 70, 148, 1) 0%, rgba(252, 128, 70, 1) 100%);
-	background-repeat: no-repeat;
-
-	background-clip: text;
-	-webkit-background-clip: text;
-	-moz-background-clip: text;
-
-	-webkit-text-fill-color: transparent;
-	-moz-text-fill-color: transparent;
+.manga-nsfw-content {
+	display: flex;
+	justify-content: center;
 }
 
-.manga-rating-score {
-	margin-left: 20px;
+.manga-nsfw-icon {
+	font-size: 60px;
+	margin-right: 20px;
 }
 
-.manga-rating-score-big {
+.manga-nsfw-warning {
 	font-size: 40px;
-	font-weight: bold;
 }
 
-.manga-rating-score-small {
-	font-size: 22px;
+.manga-nsfw-controls {
+	margin-top: 24px;
+}
+
+.manga-nsfw-controls > * {
+	margin-right: 10px;
 }

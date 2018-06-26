@@ -61,6 +61,21 @@ export default class SearchResult extends React.Component<SearchResultProps, any
 			<div className="search-result-main clickable" onClick={this.onClickMainHandler}>
 				<div className="search-result-info enable-user-select">
 					<div className="search-result-title accent-color-text">
+						{this.props.manga.hot ? (
+							<OverlayTrigger
+								placement="top"
+								overlay={
+									<Tooltip id={'manga-hot-' + this.props.manga.link}>
+										<div>HOT</div>
+									</Tooltip>
+								}
+							>
+								<Glyphicon
+									glyph="fire"
+									className="search-result-hot accent-gradient-text"
+								/>
+							</OverlayTrigger>
+						) : null}
 						{this.props.manga.name}
 					</div>
 					{this.props.showProvider ? (

@@ -13,7 +13,7 @@ module.exports = class HttpHelper {
 	}
 
 	static async get(host, port, path) {
-		const http = require('http');
+		const http = port == 443 ? require('https') : require('http');
 
 		if (host.startsWith('http://')) {
 			host = host.substring(7);
