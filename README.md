@@ -16,16 +16,52 @@ Webified to absolute shit with the following completely unnecessary technologies
 -   serve
 -   express
 
-## How to run locally:
+## Simpleton explanation of how this application works:
 
-0.  fork/clone the project
-1.  install npm (https://www.npmjs.com/get-npm)
-1.  open a terminal in the root of the project, run `npm install`
-1.  cd to `/pages/index` and run `npm install` there too
-1.  cd back to the root of the project, run `npm run build`
-1.  run `node index.js` (if that gives you an ENODE error about not being able to register the port, run it with sudo)
-1.  go to `localhost:8080`
+Bundle of Sticks is actually two applications in disguise: A frontend and a backend.
 
-If you already have something running on port 8080 or want to change it for some other reason, open `index.js` and change `const port =` to whatever you want, then restart the node server.
+The backend serves all the frontend files (HTML, CSS, JS) to your browser.
+The frontend can then send requests to the backend's `/api/` endpoint, which supplies it with data.
 
-In case you want to develop with this, instead of running `npm run build` every time you change a file, cd into `/pages/index` and run `npm run watch`. This will automatically rebuild the application and sometimes also auto refresh your open application window. To be on the safe side, refresh it if you make major changes.
+The backend doesn't store any data itself at any point, it only funnels data from other sources to the frontend, when required.
+
+The source code for the backend is in `index.js` and all files in the `api` folder.
+
+The source code for the frontend is in `pages/index`
+`/public/` holds all static resources that a browser can access, like HTML files and images.
+When the frontend is built, this is also where the build results end up, named `bundle.js` and `/css/style.min.css`.
+The JavaScript and CSS sources are stored in `/src/`.
+
+## To run or develop locally:
+
+### Required software
+
+The backend runs on a **NodeJS server** that also serves the frontend application. Both require modules from the npm registry, meaning **npm** needs to be installed as well.
+
+To install both, go here: https://nodejs.org/en/
+
+For more detailed instructions, check here: https://www.npmjs.com/get-npm
+
+### Running
+
+If you want to just run the application on your machine and use it, open a terminal in the root folder of the project and run
+`npm run start`.
+
+That will download all required npm modules, build the frontend application and start the node server.
+
+Once you see `Express server started on port 8080` in the terminal, head over to `localhost:8080` in your browser.
+
+### Develop
+
+Open a terminal in the root of the project and run `npm run build`.
+
+Then, if you want to work on the frontend, navigate to `/pages/index` and execute `npm run watch`.
+
+That will ensure that the frontend automagically rebuilds itself when you save changes to any of its files. Afterwards, you have to refresh the page in your browser if you had it open already.
+
+To only run the server and not check for module updates/build the frontend, open a terminal in the root of the project and run `node index.js`.
+
+You have to manually quit the server (Ctrl+C or close terminal) and restart it to apply changes you made to any of its files.
+
+By default, the frontend is served on port **8080**.
+If you already have something running on port 8080 or want to change it for some other reason, open `index.js` in the root directory and change `const port =` to whatever you want, then restart the node server.
