@@ -1,3 +1,5 @@
+const Logger = require('./logger');
+
 module.exports = class HttpHelper {
 	static respond(response, code, data = '') {
 		let success = false;
@@ -9,7 +11,9 @@ module.exports = class HttpHelper {
 			code: code,
 			data: data,
 		};
+
 		response.send(payload);
+		Logger.info('api', 'Responsed to request');
 	}
 
 	static async get(host, port, path) {

@@ -75,12 +75,19 @@
 
 .manga-view-page-info-element {
 	margin-bottom: 20px;
-	height: 25px;
+	min-height: 25px;
 	display: flex;
 }
 
 .manga-view-page-info-title {
-	width: 60px;
+	flex-basis: 60px;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.manga-view-page-info-list {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .manga-view-page-lower {

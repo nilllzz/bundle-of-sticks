@@ -116,7 +116,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 				<div className="manga-view-page-info-title">
 					{'Author' + (authorElements.length > 1 ? 's' : '')}:
 				</div>
-				{authorElements}
+				<div className="manga-view-page-info-list">{authorElements}</div>
 			</div>
 		);
 	}
@@ -152,7 +152,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 				<div className="manga-view-page-info-title">
 					{'Artist' + (artistElements.length > 1 ? 's' : '')}:
 				</div>
-				{artistElements}
+				<div className="manga-view-page-info-list">{artistElements}</div>
 			</div>
 		);
 	}
