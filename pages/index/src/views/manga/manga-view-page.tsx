@@ -9,6 +9,8 @@ import Manga from '../../app/models/manga.model';
 import AppSeparator from '../../components/app/app-separator';
 import Growls from '../shell/growls';
 import MangaNSFW from './manga-nsfw';
+import AppExternalLink from '../../components/app/app-external-link';
+import MangaSummary from '../../components/manga/manga-summary';
 
 type MangaViewPageState = {
 	info: Info;
@@ -174,6 +176,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 								<div className="manga-view-page-info-placeholder content-placeholder" />
 								<div className="manga-view-page-info-placeholder content-placeholder" />
 								<div className="manga-view-page-info-placeholder content-placeholder" />
+								<div className="manga-view-page-info-placeholder content-placeholder" />
 							</div>
 						</div>
 						<div className="manga-view-page-lower">
@@ -233,11 +236,18 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 									<span className="text-muted">Unknown</span>
 								)}
 							</div>
+							<div className="manga-view-page-source manga-view-page-info-element">
+								<div className="manga-view-page-info-title">Source:</div>
+								<AppExternalLink href={this.state.info.manga.getExternalLink()}>
+									{this.state.info.manga.host.getProvider().name + ' '}
+								</AppExternalLink>
+							</div>
 						</div>
 					</div>
 					<div className="manga-view-page-lower">
-						<div className="manga-view-page-summary">{this.state.info.summary}</div>
+						<MangaSummary summary={this.state.info.summary} />
 					</div>
+					<div className="manga-view-page-chapters" />
 				</div>
 			</div>
 		);

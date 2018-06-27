@@ -67,6 +67,8 @@ module.exports = class MangaHere {
 			completionStatus: null,
 			genres: null,
 			summary: null,
+			folders: null,
+			unavailable: false,
 		};
 
 		// cover img src
@@ -156,6 +158,75 @@ module.exports = class MangaHere {
 						break;
 				}
 			}
+		}
+
+		// get volumes
+		const volumes = [];
+
+		const chapterContainer = contentSection.getElementsByClassName('detail_list')[0];
+		const chapterList = chapterContainer.getElementsByTagName('ul')[0];
+		const chapterEntries = chapterList.getElementsByTagName('li');
+		for (const chapterEntry of chapterEntries) {
+			const chapterInfo = chapterEntry.children[0];
+			// link
+			const anchor = chapterInfo.children[0];
+			const link = anchor.getAttribute('href');
+			const path = this.getPathFromLink(link);
+			// name
+			let chapterName = chapterInfo.innerHTML.trim();
+			chapterName = chapterName.substring(chapterName.lastIndexOf('>') + 1).trim();
+			if (chapterName.length === 0) {
+				chapterName = null;
+			}
+			// number
+			let chapterNumberStr = chapterInfo.children[0].textContent.trim();
+			chapterNumberStr = chapterNumberStr
+				.substring(chapterNumberStr.lastIndexOf(' ') + 1)
+				.trim();
+			const chapterNumber = Number.parseFloat(chapterNumberStr);
+			// date
+			const dateContainer = chapterEntry.children[1];
+			const date = new Date(dateContainer.innerHTML.trim()).getTime();
+
+			const chapter = {
+				name: chapterName,
+				number: chapterNumber,
+				date: date,
+				link: path,
+				host: MangaHere.hostInfo,
+			};
+
+			// volume
+			let volumeNumberStr = chapterInfo.children[1].textContent.trim();
+			let volumeNumber = -1; // used if a chapter doesn't belong to a volume
+
+			if (volumeNumberStr !== '') {
+				volumeNumberStr = volumeNumberStr
+					.substring(volumeNumberStr.lastIndexOf(' '))
+					.trim();
+				volumeNumber = Number.parseFloat(volumeNumberStr);
+			}
+
+			let volume = volumes.find(v => v.number === volumeNumber);
+			// create volume if it doesn't exist
+			if (!volume) {
+				volume = {
+					number: volumeNumber,
+					chapters: [],
+				};
+				volumes.push(volume);
+			}
+			// add chapter to volume
+			volume.chapters.push(chapter);
+		}
+
+		// MangaHere doesn't have folders, put all volumes in a default folder
+		const folder = { language: 'en', volumes: volumes };
+		info.folders = [folder];
+
+		// mangas on MangaHere can get remove through licensing claims
+		if (chapterContainer.children[0].className === 'mt10 color_ff00 mb10') {
+			info.unavailable = true;
 		}
 
 		return info;
