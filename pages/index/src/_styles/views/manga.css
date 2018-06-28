@@ -102,8 +102,8 @@
 	height: 125px;
 }
 
-.manga-view-page-summary {
-	width: 85%;
+.manga-view-page-controls {
+	margin-top: 20px;
 }
 
 .manga-nsfw-main {

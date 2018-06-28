@@ -37,6 +37,9 @@ export class Api {
 
 			xhr.onload = e => {
 				const response = JSON.parse(xhr.responseText.replace(/&amp;/g, '&'));
+				if (!response.success) {
+					console.error('Api request returned error');
+				}
 				resolve(response);
 			};
 			console.log('Api request to', url);

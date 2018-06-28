@@ -35,6 +35,10 @@
 	font-size: 24px;
 }
 
+.app-button-dark {
+	background-color: var(--default-bg-color);
+}
+
 .app-separator {
 	margin-left: 6px;
 	margin-right: 6px;

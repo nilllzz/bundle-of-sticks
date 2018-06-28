@@ -4,6 +4,7 @@
 @import url('components/app.css');
 @import url('components/manga.css');
 @import url('components/nav.css');
+@import url('components/reader.css');
 @import url('shell/footer.css');
 @import url('shell/growls.css');
 @import url('shell/header.css');
@@ -11,6 +12,7 @@
 @import url('views/home.css');
 @import url('views/manga.css');
 @import url('views/not-found.css');
+@import url('views/reader.css');
 @import url('views/search.css');
 
 body {

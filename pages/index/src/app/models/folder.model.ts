@@ -2,7 +2,9 @@ import BaseModel from './base.model';
 import Volume from './volume.model';
 
 export default class Folder extends BaseModel {
-	language: string;
+	number: number;
+	name: string;
+	language: string = 'en'; // default language is english
 
 	volumes: Volume[];
 
@@ -12,6 +14,10 @@ export default class Folder extends BaseModel {
 		if (data.volumes) {
 			this.volumes = Volume.populate(data.volumes);
 		}
+	}
+
+	public getId() {
+		return this.name.toLowerCase();
 	}
 }
 

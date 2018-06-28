@@ -48,4 +48,18 @@ module.exports = class SourceHelper {
 				return await MangaPark.getInfo(mangaLink);
 		}
 	}
+
+	static async getPages(hostId, chapterLink) {
+		switch (hostId) {
+			case MangaHere.id:
+				return await MangaHere.getPages(chapterLink);
+		}
+	}
+
+	static async getPageSrc(hostId, pageLink) {
+		switch (hostId) {
+			case MangaHere.id:
+				return await MangaHere.getPageSrc(pageLink);
+		}
+	}
 };

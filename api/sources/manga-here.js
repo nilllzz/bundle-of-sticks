@@ -68,6 +68,7 @@ module.exports = class MangaHere {
 			genres: null,
 			summary: null,
 			folders: null,
+			nsfw: false,
 			unavailable: false,
 		};
 
@@ -160,6 +161,11 @@ module.exports = class MangaHere {
 			}
 		}
 
+		// tag 'Mature" accounts for nsfw, MangaHere doesn't have a seperate indicator
+		if (info.genres && info.genres.includes('Mature')) {
+			info.nsfw = true;
+		}
+
 		// get volumes
 		const volumes = [];
 
@@ -221,7 +227,7 @@ module.exports = class MangaHere {
 		}
 
 		// MangaHere doesn't have folders, put all volumes in a default folder
-		const folder = { language: 'en', volumes: volumes };
+		const folder = { name: '[Main]', number: 1, volumes: volumes };
 		info.folders = [folder];
 
 		// mangas on MangaHere can get remove through licensing claims
@@ -265,12 +271,15 @@ module.exports = class MangaHere {
 	}
 
 	static async getPages(chapterLink) {
+		console.log(HOST, chapterLink);
 		const result = await HttpHelper.get(HOST, 80, chapterLink);
 		const pages = [];
 
 		const dom = new JSDOM(result.body);
 		const navitaionElement = dom.window.document.getElementsByClassName('go_page')[0];
-		const pageSelect = navitaionElement.children[2].children[1];
+		const pageSelect = navitaionElement
+			.getElementsByClassName('right')[0]
+			.getElementsByTagName('select')[0];
 		const pageElements = pageSelect.getElementsByTagName('option');
 
 		let num = 1;
@@ -281,7 +290,7 @@ module.exports = class MangaHere {
 
 			pages.push({
 				name: title,
-				num: num,
+				number: num,
 				link: path,
 				host: MangaHere.hostInfo,
 			});
@@ -290,6 +299,16 @@ module.exports = class MangaHere {
 		}
 
 		return pages;
+	}
+
+	static async getPageSrc(pageLink) {
+		const result = await HttpHelper.get(HOST, 80, pageLink);
+		const dom = new JSDOM(result.body);
+
+		const imgElement = dom.window.document.getElementById('image');
+		const src = imgElement.getAttribute('src');
+
+		return src;
 	}
 
 	// returns the page's image as base 64

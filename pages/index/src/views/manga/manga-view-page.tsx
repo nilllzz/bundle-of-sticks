@@ -11,6 +11,8 @@ import Growls from '../shell/growls';
 import MangaNSFW from './manga-nsfw';
 import AppExternalLink from '../../components/app/app-external-link';
 import MangaSummary from '../../components/manga/manga-summary';
+import AppButton from '../../components/app/app-button';
+import ReaderBase from '../reader/reader-base';
 
 type MangaViewPageState = {
 	info: Info;
@@ -247,7 +249,27 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 					<div className="manga-view-page-lower">
 						<MangaSummary summary={this.state.info.summary} />
 					</div>
-					<div className="manga-view-page-chapters" />
+					<div className="manga-view-page-controls">
+						{!this.state.info.unavailable ? (
+							<AppButton
+								main={true}
+								onClick={() => {
+									ReaderBase.show(this.state.info.manga, this.state.info.folders);
+								}}
+							>
+								Start reading
+							</AppButton>
+						) : (
+							<span className="accent-color-text">
+								<Glyphicon glyph="lock" />{' '}
+								{this.state.info.manga.host.getProvider().name} has marked this
+								Manga as <strong>unavailable</strong>.{' '}
+							</span>
+						)}
+					</div>
+					{/* <div className="manga-view-page-chapters">
+						{JSON.stringify(this.state.info.folders)}
+					</div> */}
 				</div>
 			</div>
 		);

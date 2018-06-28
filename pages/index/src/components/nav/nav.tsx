@@ -9,7 +9,7 @@ type NavProps = {
 export default class Nav extends React.Component<NavProps, any> {
 	public render() {
 		return (
-			<div className="nav-main">
+			<nav className="nav-main">
 				<div className="nav-list">
 					<NavItem text="Home" icon="home" linkTo="/" location={this.props.location} />
 					<NavItem
@@ -29,7 +29,7 @@ export default class Nav extends React.Component<NavProps, any> {
 					<NavSeparator />
 					<NavItem text="Sources" linkTo="/sources" location={this.props.location} />
 				</div>
-			</div>
+			</nav>
 		);
 	}
 }

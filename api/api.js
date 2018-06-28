@@ -2,11 +2,14 @@ const HttpHelper = require('./http-helper');
 const SourceHelper = require('./sources/source-helper');
 const ApiCache = require('./api-cache');
 const Logger = require('./logger');
+const TimeHelper = require('./time-helper');
 
 module.exports = function defineApi(expressApp) {
 	defineSearch(expressApp);
 	defineChapters(expressApp);
 	defineInfo(expressApp);
+	definePages(expressApp);
+	definePageSrc(expressApp);
 };
 
 function requireQueryParams(request, params) {
@@ -44,7 +47,7 @@ function defineSearch(expressApp) {
 			}
 
 			const results = await SourceHelper.search(query, providers);
-			cache = ApiCache.cacheRequest(request, 'search', results);
+			cache = ApiCache.cacheRequest(request, 'search', results, TimeHelper.minutes(10));
 		}
 
 		HttpHelper.respond(response, 200, cache);
@@ -63,7 +66,7 @@ function defineChapters(expressApp) {
 		const hostId = decodeURIComponent(request.query.host);
 		const mangaLink = decodeURIComponent(request.query.manga);
 
-		const chapters = await SourceHelper.getChapters(hostId, mangaLink);
+		const chapters = await SourceHelper.getChapters(hostId, mangaLink, TimeHelper.hours(1));
 		HttpHelper.respond(response, 200, chapters);
 	});
 }
@@ -83,7 +86,56 @@ function defineInfo(expressApp) {
 			const mangaLink = decodeURIComponent(request.query.manga);
 
 			const info = await SourceHelper.getInfo(hostId, mangaLink);
-			cache = ApiCache.cacheRequest(request, 'manga/info', info);
+			cache = ApiCache.cacheRequest(request, 'manga/info', info, TimeHelper.hours(1));
+		}
+
+		HttpHelper.respond(response, 200, cache);
+	});
+}
+
+function definePages(expressApp) {
+	expressApp.get('/api/manga/pages', async function(request, response) {
+		Logger.info('api', 'Open api at /api/manga/pages');
+
+		if (!requireQueryParams(request, ['host', 'chapter'])) {
+			HttpHelper.respond(response, 400);
+			return;
+		}
+
+		let cache = ApiCache.getCache(request, 'manga/pages');
+		if (cache === false) {
+			const hostId = decodeURIComponent(request.query.host);
+			const chapterLink = decodeURIComponent(request.query.chapter);
+
+			const info = await SourceHelper.getPages(hostId, chapterLink);
+			cache = ApiCache.cacheRequest(request, 'manga/pages', info, TimeHelper.hours(1));
+		}
+
+		HttpHelper.respond(response, 200, cache);
+	});
+}
+
+function definePageSrc(expressApp) {
+	expressApp.get('/api/manga/page/src', async function(request, response) {
+		Logger.info('api', 'Open api at /api/manga/page/src');
+
+		if (!requireQueryParams(request, ['host', 'page'])) {
+			HttpHelper.respond(response, 400);
+			return;
+		}
+
+		let cache = ApiCache.getCache(request, 'manga/page/src');
+		if (cache === false) {
+			const hostId = decodeURIComponent(request.query.host);
+			const pageLink = decodeURIComponent(request.query.page);
+
+			try {
+				const info = await SourceHelper.getPageSrc(hostId, pageLink);
+				cache = ApiCache.cacheRequest(request, 'manga/page/src', info, TimeHelper.hours(1));
+			} catch (e) {
+				Logger.error('api', e);
+				HttpHelper.respond(response, 500);
+			}
 		}
 
 		HttpHelper.respond(response, 200, cache);

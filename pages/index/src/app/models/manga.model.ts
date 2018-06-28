@@ -23,6 +23,10 @@ export default class Manga extends BaseModel {
 	public getExternalLink() {
 		return this.host.getUrl() + this.link;
 	}
+
+	public getId() {
+		return this.host.id + '|' + this.link;
+	}
 }
 
 BaseModel.create(Manga);

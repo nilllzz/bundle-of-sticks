@@ -3,6 +3,7 @@ import Footer from './footer';
 import Header from './header';
 import Nav from '../../components/nav/nav';
 import Growls from './growls';
+import ReaderBase from '../reader/reader-base';
 
 export default class Shell extends React.Component<any, any> {
 	public render() {
@@ -21,6 +22,7 @@ export default class Shell extends React.Component<any, any> {
 					</div>
 				</div>
 				<Footer />
+				<ReaderBase />
 				<Growls />
 			</div>
 		);

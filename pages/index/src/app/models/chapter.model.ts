@@ -1,5 +1,7 @@
 import BaseModel from './base.model';
 import Host from './host.model';
+import Page from './page.models';
+import { Api } from '../api';
 
 export default class Chapter extends BaseModel {
 	name: string;
@@ -7,6 +9,7 @@ export default class Chapter extends BaseModel {
 	date: number;
 	link: string;
 
+	pages?: Page[];
 	host: Host;
 
 	constructor(data: any = {}) {
@@ -14,6 +17,19 @@ export default class Chapter extends BaseModel {
 
 		if (data.host) {
 			this.host = new Host(data.host);
+		}
+		if (data.pages) {
+			this.pages = Page.populate(data.pages);
+		}
+	}
+
+	public async loadPages() {
+		if (!this.pages) {
+			const result = await Api.getRequest('/api/manga/pages', {
+				host: this.host.id,
+				chapter: this.link,
+			});
+			this.pages = Page.populate(result.data);
 		}
 	}
 }

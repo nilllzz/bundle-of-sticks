@@ -14,7 +14,7 @@ export default class MangaSummary extends React.Component<MangaSummaryProps, Man
 	constructor(props: MangaSummaryProps) {
 		super(props);
 
-		if (this.props.summary.length > 500) {
+		if (this.props.summary && this.props.summary.length > 500) {
 			// show 500 chars
 			this.shortSummary = this.props.summary.substr(0, 500);
 			// try to cut at a space
@@ -38,6 +38,10 @@ export default class MangaSummary extends React.Component<MangaSummaryProps, Man
 	}
 
 	public render() {
+		if (!this.props.summary) {
+			return null;
+		}
+
 		if (this.state.expanded) {
 			return (
 				<div className="manga-summary-main">

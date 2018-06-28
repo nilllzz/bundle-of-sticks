@@ -5,6 +5,7 @@ type AppButtonProps = {
 	onClick?: () => void;
 	icon?: string;
 	main?: boolean;
+	dark?: boolean;
 };
 
 export default class AppButton extends React.Component<AppButtonProps, any> {
@@ -12,6 +13,9 @@ export default class AppButton extends React.Component<AppButtonProps, any> {
 		let mainClass = 'app-button clickable';
 		if (this.props.main) {
 			mainClass += ' app-button-main';
+		}
+		if (this.props.dark) {
+			mainClass += ' app-button-dark';
 		}
 
 		return (

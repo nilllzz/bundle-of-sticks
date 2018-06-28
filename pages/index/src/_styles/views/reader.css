@@ -1,0 +1,49 @@
+.reader-base-main {
+	position: fixed;
+	z-index: 99;
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-height: 100vh;
+	background: var(--main-bg-color);
+	color: var(--default-white);
+}
+
+.reader-base-body {
+	display: flex;
+}
+
+.reader-base-content {
+	width: 100%;
+	position: static;
+	overflow-y: auto;
+	height: calc(100vh - 56px);
+}
+
+.reader-base-loading {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	display: flex;
+	justify-content: center;
+	margin-top: 100px;
+}
+
+.reader-base-content img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 90%;
+}
+
+/* .reader-base-content img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height: 100%;
+} */
+
+/* .reader-base-content img {
+	display: block;
+	width: 100%;
+} */
