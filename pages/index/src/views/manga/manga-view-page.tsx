@@ -267,9 +267,6 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 							</span>
 						)}
 					</div>
-					{/* <div className="manga-view-page-chapters">
-						{JSON.stringify(this.state.info.folders)}
-					</div> */}
 				</div>
 			</div>
 		);
