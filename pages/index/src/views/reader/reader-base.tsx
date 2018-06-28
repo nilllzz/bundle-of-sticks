@@ -9,9 +9,10 @@ import Volume from '../../app/models/volume.model';
 import Page from '../../app/models/page.models';
 import ReaderNotFound from '../../components/reader/reader-not-found';
 import AppLoading from '../../components/app/app-loading';
-import { Settings } from '../../components/reader/reader-settings';
+import ReaderSettings, { Settings } from '../../components/reader/reader-settings';
 import LocalState from '../../app/local-state';
 import ReadingRecords from '../../app/reading-records';
+import ReaderPageCache from '../../app/reader-page-cache';
 
 type ReaderBaseState = {
 	manga: Manga;
@@ -35,9 +36,10 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 	constructor(props: any) {
 		super(props);
 
-		const settings = LocalState.readDefault('reader-settings', {
-			pageAlignment: 'scroll',
-		}) as Settings;
+		const settings = LocalState.readDefault(
+			'reader-settings',
+			ReaderSettings.getDefaultSettings()
+		) as Settings;
 
 		this.state = {
 			visible: false,
@@ -124,6 +126,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				};
 
 				this.setState(newState, () => {
+					this.cacheChapter();
 					if (!this.state.pageLoadError) {
 						this.updateRecord();
 					}
@@ -188,6 +191,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 							pageLoadError: !pageLoadSuccess,
 						},
 						() => {
+							this.cacheChapter();
 							if (!this.state.pageLoadError) {
 								this.updateRecord();
 							}
@@ -200,7 +204,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			this.setState(
 				{
 					currentPageIndex: newPageIndex,
-					loading: !newPage.src,
+					loading: !newPage.src && !newPage.srcBase64,
 				},
 				async () => {
 					const pageLoadSuccess = await this.tryLoadPage(newPage);
@@ -211,11 +215,17 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 								pageLoadError: !pageLoadSuccess,
 							},
 							() => {
+								this.cacheChapter();
 								if (!this.state.pageLoadError) {
 									this.updateRecord();
 								}
 							}
 						);
+					} else {
+						this.cacheChapter();
+						if (!this.state.pageLoadError) {
+							this.updateRecord();
+						}
 					}
 				}
 			);
@@ -223,14 +233,27 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 	}
 
 	private async tryLoadPage(page: Page) {
+		if (page.srcBase64) {
+			return true;
+		}
 		await page.loadSrc();
 		return !!page.src;
+	}
+
+	private cacheChapter() {
+		if (this.state.settings.cacheChapter) {
+			ReaderPageCache.cacheChapter(this.state.currentChapter, this.state.currentPageIndex);
+		}
 	}
 
 	private onClickCloseHandler() {
 		this.setState({
 			visible: false,
 		});
+
+		// clear all cached pages
+		ReaderPageCache.clearCache(this.state.outline);
+
 		// remove the overflow hidden from the body again
 		const bodyElement = document.getElementsByTagName('body')[0];
 		bodyElement.style.overflow = 'auto';
@@ -247,6 +270,9 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			for (const volume of folder.volumes) {
 				for (const chapter of volume.chapters) {
 					if (chapter === newChapter) {
+						// before going to a new chapter, clear the cache
+						ReaderPageCache.clearCache(this.state.outline);
+
 						this.setState(
 							{
 								loading: true,
@@ -267,6 +293,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 										pageLoadError: !pageLoadSuccess,
 									},
 									() => {
+										this.cacheChapter();
 										if (!this.state.pageLoadError) {
 											this.updateRecord();
 										}
@@ -300,6 +327,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 						pageLoadError: !pageLoadSuccess,
 					},
 					() => {
+						this.cacheChapter();
 						if (!this.state.pageLoadError) {
 							this.updateRecord();
 						}
@@ -321,9 +349,16 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			return <div />;
 		}
 
-		const pageSrc = this.state.loading
-			? null
-			: this.state.currentChapter.pages[this.state.currentPageIndex].src;
+		let pageSrc = null;
+		if (!this.state.loading) {
+			const currentPage = this.state.currentChapter.pages[this.state.currentPageIndex];
+			if (currentPage.srcBase64) {
+				pageSrc = currentPage.srcBase64;
+			} else if (currentPage.src) {
+				pageSrc = currentPage.src;
+			}
+		}
+
 		return (
 			<div className="reader-base-main">
 				<ReaderTop

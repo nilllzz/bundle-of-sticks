@@ -271,7 +271,6 @@ module.exports = class MangaHere {
 	}
 
 	static async getPages(chapterLink) {
-		console.log(HOST, chapterLink);
 		const result = await HttpHelper.get(HOST, 80, chapterLink);
 		const pages = [];
 
@@ -285,41 +284,44 @@ module.exports = class MangaHere {
 		let num = 1;
 		for (const pageElement of pageElements) {
 			const title = pageElement.innerHTML.trim();
-			const link = pageElement.getAttribute('value');
-			const path = this.getPathFromLink(link);
 
-			pages.push({
-				name: title,
-				number: num,
-				link: path,
-				host: MangaHere.hostInfo,
-			});
+			// manga here has this weird Featured page at the end of every chapter that's almost always empty
+			// let's just ignore it
+			if (title != 'Featured') {
+				const link = pageElement.getAttribute('value');
+				const path = this.getPathFromLink(link);
 
-			num++;
+				pages.push({
+					name: title,
+					number: num,
+					link: path,
+					host: MangaHere.hostInfo,
+				});
+
+				num++;
+			}
 		}
 
 		return pages;
 	}
 
-	static async getPageSrc(pageLink) {
+	/**
+	 * @param {string} pageLink
+	 * @param {boolean} base64
+	 * @return {string}
+	 */
+	static async getPageSrc(pageLink, base64) {
 		const result = await HttpHelper.get(HOST, 80, pageLink);
 		const dom = new JSDOM(result.body);
 
 		const imgElement = dom.window.document.getElementById('image');
 		const src = imgElement.getAttribute('src');
 
-		return src;
-	}
-
-	// returns the page's image as base 64
-	static async getPageImage(pageLink) {
-		const result = await HttpHelper.get(HOST, 80, pageLink);
-		const dom = new JSDOM(result.body);
-
-		const imgElement = dom.window.document.getElementById('image');
-		const src = imgElement.getAttribute('src');
-
-		const imgbase64 = await HttpHelper.getImageBase64(src);
-		return imgbase64.body;
+		if (base64) {
+			const imgbase64 = await HttpHelper.getImageBase64(src);
+			return imgbase64;
+		} else {
+			return src;
+		}
 	}
 };

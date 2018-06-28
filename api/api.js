@@ -129,9 +129,12 @@ function definePageSrc(expressApp) {
 			const hostId = decodeURIComponent(request.query.host);
 			const pageLink = decodeURIComponent(request.query.page);
 
+			// if the base64 image data should be returned instead of the path to the image
+			const base64 = !!request.query.base64;
+
 			try {
-				const info = await SourceHelper.getPageSrc(hostId, pageLink);
-				cache = ApiCache.cacheRequest(request, 'manga/page/src', info, TimeHelper.hours(1));
+				const src = await SourceHelper.getPageSrc(hostId, pageLink, base64);
+				cache = ApiCache.cacheRequest(request, 'manga/page/src', src, TimeHelper.hours(1));
 			} catch (e) {
 				Logger.error('api', e);
 				HttpHelper.respond(response, 500);

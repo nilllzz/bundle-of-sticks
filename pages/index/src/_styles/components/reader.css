@@ -156,6 +156,7 @@
 
 .reader-settings-section {
 	display: flex;
+	margin-top: 10px;
 }
 
 .reader-settings-section-header {

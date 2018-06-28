@@ -7,6 +7,7 @@ export default class Page extends BaseModel {
 	number: number;
 	link: string;
 	src?: string;
+	srcBase64?: string;
 
 	host: Host;
 
@@ -26,6 +27,19 @@ export default class Page extends BaseModel {
 			});
 			if (result.success) {
 				this.src = result.data;
+			}
+		}
+	}
+
+	public async loadSrcBase64() {
+		if (!this.srcBase64) {
+			const result = await Api.getRequest('/api/manga/page/src', {
+				host: this.host.id,
+				page: this.link,
+				base64: true,
+			});
+			if (result.success) {
+				this.srcBase64 = result.data;
 			}
 		}
 	}

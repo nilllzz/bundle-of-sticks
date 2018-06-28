@@ -53,6 +53,10 @@ module.exports = class HttpHelper {
 		return result;
 	}
 
+	/**
+	 * @param {string} src
+	 * @return {string}
+	 */
 	static async getImageBase64(src) {
 		const http = src.startsWith('https://') ? require('https') : require('http');
 
@@ -79,6 +83,14 @@ module.exports = class HttpHelper {
 			});
 		});
 
-		return result;
+		// add base 64 extension
+		let extension = 'tiff';
+		if (src.toLowerCase().endsWith('.jpeg') || src.toLowerCase().endsWith('.jpg')) {
+			extension = 'jpeg';
+		} else if (src.toLowerCase().endsWith('.png')) {
+			extension = 'png';
+		}
+		const base64 = 'data:image/' + extension + ';base64, ' + result.body;
+		return base64;
 	}
 };

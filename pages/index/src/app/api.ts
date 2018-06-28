@@ -42,7 +42,6 @@ export class Api {
 				}
 				resolve(response);
 			};
-			console.log('Api request to', url);
 			xhr.open('GET', url);
 			xhr.send();
 		});
