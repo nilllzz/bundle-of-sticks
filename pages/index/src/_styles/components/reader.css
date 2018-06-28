@@ -21,6 +21,10 @@
 	align-items: center;
 }
 
+.reader-top-right {
+	display: flex;
+}
+
 .reader-top-title {
 	margin-left: 16px;
 	font-size: 24px;
@@ -100,6 +104,7 @@
 	border-style: solid;
 	border-radius: 3px;
 	border-color: var(--reader-border-color);
+	box-shadow: 0px 0px 20px var(--shadow-color);
 }
 
 .reader-not-found-header {
@@ -128,4 +133,43 @@
 
 .reader-not-found-controls > .app-button {
 	margin-right: 20px;
+}
+
+.reader-settings-main {
+	position: fixed;
+	z-index: 99;
+	top: 66px;
+	right: 30px;
+	border-style: solid;
+	border-radius: 3px;
+	border-width: 2px;
+	border-color: var(--reader-border-color);
+	box-shadow: 0px 0px 20px var(--shadow-color);
+	background-color: var(--main-bg-color);
+	padding: 20px;
+}
+
+.reader-settings-title {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.reader-settings-section {
+	display: flex;
+}
+
+.reader-settings-section-header {
+	width: 120px;
+}
+
+.reader-checkbox-main {
+	margin-bottom: 6px;
+}
+
+.reader-checkbox-main:active {
+	color: var(--accent-color);
+}
+
+.reader-checkbox-icon {
+	margin-right: 4px;
 }

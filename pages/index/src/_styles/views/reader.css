@@ -1,6 +1,6 @@
 .reader-base-main {
 	position: fixed;
-	z-index: 99;
+	z-index: 98;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -25,25 +25,26 @@
 	margin-left: auto;
 	margin-right: auto;
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	margin-top: 100px;
+	width: 100px;
 }
 
-.reader-base-content img {
+.reader-base-image-scroll {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	max-width: 90%;
 }
 
-/* .reader-base-content img {
+.reader-base-image-fit-vertical {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	height: 100%;
-} */
+}
 
-/* .reader-base-content img {
+.reader-base-image-fit-horizontal {
 	display: block;
 	width: 100%;
-} */
+}

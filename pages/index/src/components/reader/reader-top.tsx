@@ -1,14 +1,35 @@
 import * as React from 'react';
 import ReaderButton from './reader-button';
 import Manga from '../../app/models/manga.model';
+import ReaderSettings, { Settings } from './reader-settings';
 
 type ReaderTopProps = {
 	manga: Manga;
+	settings: Settings;
 	onClose: () => void;
 	onToggleOutline: () => void;
+	updateSettings: (newSettings: Settings) => void;
 };
 
-export default class ReaderTop extends React.Component<ReaderTopProps, any> {
+type ReaderTopState = {
+	settingsVisible: boolean;
+};
+
+export default class ReaderTop extends React.Component<ReaderTopProps, ReaderTopState> {
+	constructor(props: ReaderTopProps) {
+		super(props);
+
+		this.state = { settingsVisible: false };
+
+		this.onToggleSettingsHandler = this.onToggleSettingsHandler.bind(this);
+	}
+
+	private onToggleSettingsHandler() {
+		this.setState({
+			settingsVisible: !this.state.settingsVisible,
+		});
+	}
+
 	public render() {
 		return (
 			<div className="reader-top-main">
@@ -19,8 +40,14 @@ export default class ReaderTop extends React.Component<ReaderTopProps, any> {
 					</span>
 				</div>
 				<div className="reader-top-right">
+					<ReaderButton glyph="cog" onClick={this.onToggleSettingsHandler} />
 					<ReaderButton glyph="remove" onClick={this.props.onClose} />
 				</div>
+				<ReaderSettings
+					updateSettings={this.props.updateSettings}
+					settings={this.props.settings}
+					visible={this.state.settingsVisible}
+				/>
 			</div>
 		);
 	}

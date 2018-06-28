@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Manga from '../../app/models/manga.model';
-import { Fade, Collapse } from 'react-bootstrap';
+import { Fade } from 'react-bootstrap';
 import ReaderTop from '../../components/reader/reader-top';
 import ReaderOutline from '../../components/reader/reader-outline';
 import Folder from '../../app/models/folder.model';
@@ -9,6 +9,9 @@ import Volume from '../../app/models/volume.model';
 import Page from '../../app/models/page.models';
 import ReaderNotFound from '../../components/reader/reader-not-found';
 import AppLoading from '../../components/app/app-loading';
+import { Settings } from '../../components/reader/reader-settings';
+import LocalState from '../../app/local-state';
+import ReadingRecords from '../../app/reading-records';
 
 type ReaderBaseState = {
 	manga: Manga;
@@ -22,6 +25,8 @@ type ReaderBaseState = {
 	currentVolume: Volume;
 	currentChapter: Chapter;
 	currentPageIndex: number;
+
+	settings: Settings;
 };
 
 export default class ReaderBase extends React.Component<any, ReaderBaseState> {
@@ -29,6 +34,10 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 
 	constructor(props: any) {
 		super(props);
+
+		const settings = LocalState.readDefault('reader-settings', {
+			pageAlignment: 'scroll',
+		}) as Settings;
 
 		this.state = {
 			visible: false,
@@ -42,6 +51,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			currentVolume: null,
 			currentChapter: null,
 			currentPageIndex: null,
+
+			settings: settings,
 		};
 
 		this.onClickCloseHandler = this.onClickCloseHandler.bind(this);
@@ -50,25 +61,47 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.onSelectChapter = this.onSelectChapter.bind(this);
 		this.onSelectVolume = this.onSelectVolume.bind(this);
 		this.onRefreshPage = this.onRefreshPage.bind(this);
+		this.onUpdateSettings = this.onUpdateSettings.bind(this);
 
 		ReaderBase._handle = this;
 	}
 
 	public static show(manga: Manga, outline: Folder[]) {
-		this._handle.setState({
-			visible: true,
-			manga: manga,
-			outline: outline,
-		});
-
 		// apply overflow hidden to body to make it not scrollable
 		const bodyElement = document.getElementsByTagName('body')[0];
 		bodyElement.style.overflow = 'hidden';
 
-		const folder = outline[0]; // show the first folder
-		const volume = folder.volumes[folder.volumes.length - 1]; // show the first volume (sorted to the end)
-		const chapter = volume.chapters[volume.chapters.length - 1]; // show the first chapter (sorted to the end)
-		this._handle.showPage(folder, volume, chapter, 0);
+		this._handle.setState(
+			{
+				visible: true,
+				manga: manga,
+				outline: outline,
+			},
+			() => {
+				// try to load reading record
+				const record = ReadingRecords.read(manga);
+				if (record) {
+					const folder = outline.find(f => f.getId() === record.folderId);
+					if (folder) {
+						const volume = folder.volumes.find(v => v.number === record.volume);
+						if (volume) {
+							const chapter = volume.chapters.find(c => c.number === record.chapter);
+							if (chapter) {
+								const pageIndex = record.page;
+								this._handle.showPage(folder, volume, chapter, pageIndex);
+								return;
+							}
+						}
+					}
+				}
+
+				// no valid reading record exists, start at the beginning
+				const folder = outline[0]; // show the first folder
+				const volume = folder.volumes[folder.volumes.length - 1]; // show the first volume (sorted to the end)
+				const chapter = volume.chapters[volume.chapters.length - 1]; // show the first chapter (sorted to the end)
+				this._handle.showPage(folder, volume, chapter, 0);
+			}
+		);
 	}
 
 	private showPage(folder: Folder, volume: Volume, chapter: Chapter, pageIndex: number) {
@@ -90,8 +123,22 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					currentPageIndex: pageIndex,
 				};
 
-				this.setState(newState);
+				this.setState(newState, () => {
+					if (!this.state.pageLoadError) {
+						this.updateRecord();
+					}
+				});
 			}
+		);
+	}
+
+	private updateRecord() {
+		ReadingRecords.track(
+			this.state.manga,
+			this.state.currentPageIndex,
+			this.state.currentChapter,
+			this.state.currentVolume,
+			this.state.currentFolder
 		);
 	}
 
@@ -135,10 +182,17 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					const pageLoadSuccess = await this.tryLoadPage(
 						this.state.currentChapter.pages[this.state.currentPageIndex]
 					);
-					this.setState({
-						loading: false,
-						pageLoadError: !pageLoadSuccess,
-					});
+					this.setState(
+						{
+							loading: false,
+							pageLoadError: !pageLoadSuccess,
+						},
+						() => {
+							if (!this.state.pageLoadError) {
+								this.updateRecord();
+							}
+						}
+					);
 				}
 			);
 		} else {
@@ -151,10 +205,17 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				async () => {
 					const pageLoadSuccess = await this.tryLoadPage(newPage);
 					if (pageLoadSuccess === this.state.pageLoadError || this.state.loading) {
-						this.setState({
-							loading: false,
-							pageLoadError: !pageLoadSuccess,
-						});
+						this.setState(
+							{
+								loading: false,
+								pageLoadError: !pageLoadSuccess,
+							},
+							() => {
+								if (!this.state.pageLoadError) {
+									this.updateRecord();
+								}
+							}
+						);
 					}
 				}
 			);
@@ -200,10 +261,17 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 								const pageLoadSuccess = await this.tryLoadPage(
 									this.state.currentChapter.pages[this.state.currentPageIndex]
 								);
-								this.setState({
-									loading: false,
-									pageLoadError: !pageLoadSuccess,
-								});
+								this.setState(
+									{
+										loading: false,
+										pageLoadError: !pageLoadSuccess,
+									},
+									() => {
+										if (!this.state.pageLoadError) {
+											this.updateRecord();
+										}
+									}
+								);
 							}
 						);
 					}
@@ -226,12 +294,26 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				const pageLoadSuccess = await this.tryLoadPage(
 					this.state.currentChapter.pages[this.state.currentPageIndex]
 				);
-				this.setState({
-					loading: false,
-					pageLoadError: !pageLoadSuccess,
-				});
+				this.setState(
+					{
+						loading: false,
+						pageLoadError: !pageLoadSuccess,
+					},
+					() => {
+						if (!this.state.pageLoadError) {
+							this.updateRecord();
+						}
+					}
+				);
 			}
 		);
+	}
+
+	private onUpdateSettings(newSettings: Settings) {
+		LocalState.write('reader-settings', newSettings);
+		this.setState({
+			settings: newSettings,
+		});
 	}
 
 	private renderMain() {
@@ -248,6 +330,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					manga={this.state.manga}
 					onClose={this.onClickCloseHandler}
 					onToggleOutline={this.onClickToggleOutlineHandler}
+					updateSettings={this.onUpdateSettings}
+					settings={this.state.settings}
 				/>
 				<div className="reader-base-body">
 					<ReaderOutline
@@ -272,7 +356,11 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 								page={this.state.currentChapter.pages[this.state.currentPageIndex]}
 							/>
 						) : (
-							<img onClick={this.advancePage} src={pageSrc} />
+							<img
+								className={'reader-base-image-' + this.state.settings.pageAlignment}
+								onClick={this.advancePage}
+								src={pageSrc}
+							/>
 						)}
 					</div>
 				</div>

@@ -30,7 +30,7 @@ export default class ReadingRecords {
 
 	public static track(
 		manga: Manga,
-		page: Page,
+		pageIndex: number,
 		chapter: Chapter,
 		volume: Volume,
 		folder: Folder
@@ -39,7 +39,7 @@ export default class ReadingRecords {
 
 		const record = {
 			manga: manga,
-			page: page.number,
+			page: pageIndex,
 			chapter: chapter.number,
 			volume: volume.number,
 			folderId: folder.getId(),
@@ -47,8 +47,9 @@ export default class ReadingRecords {
 		};
 
 		const currentRecord = this.read(manga);
+		// remove current record if one exists
 		if (currentRecord) {
-			this.buffer = this.buffer.filter(r => r.manga.getId() !== manga.getId());
+			this.buffer = this.buffer.filter(r => new Manga(r.manga).getId() !== manga.getId());
 		}
 		this.buffer.push(record);
 		this.writeBuffer();
@@ -56,6 +57,6 @@ export default class ReadingRecords {
 
 	public static read(manga: Manga): ReadingRecord {
 		this.loadBuffer();
-		return this.buffer.find(r => r.manga.getId() === manga.getId());
+		return this.buffer.find(r => new Manga(r.manga).getId() === manga.getId());
 	}
 }
