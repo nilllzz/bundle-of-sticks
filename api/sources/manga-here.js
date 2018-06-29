@@ -308,7 +308,7 @@ module.exports = class MangaHere {
 	/**
 	 * @param {string} pageLink
 	 * @param {boolean} base64
-	 * @return {string}
+	 * @return {object}
 	 */
 	static async getPageSrc(pageLink, base64) {
 		const result = await HttpHelper.get(HOST, 80, pageLink);
@@ -317,11 +317,11 @@ module.exports = class MangaHere {
 		const imgElement = dom.window.document.getElementById('image');
 		const src = imgElement.getAttribute('src');
 
+		let srcBase64 = null;
 		if (base64) {
 			const imgbase64 = await HttpHelper.getImageBase64(src);
-			return imgbase64;
-		} else {
-			return src;
+			srcBase64 = imgbase64;
 		}
+		return { srcBase64: srcBase64, src: src };
 	}
 };

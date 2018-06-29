@@ -53,6 +53,8 @@ module.exports = class SourceHelper {
 		switch (hostId) {
 			case MangaHere.id:
 				return await MangaHere.getPages(chapterLink);
+			case MangaPark.id:
+				return await MangaPark.getPages(chapterLink);
 		}
 	}
 
@@ -60,12 +62,14 @@ module.exports = class SourceHelper {
 	 * @param {string} hostId
 	 * @param {string} pageLink
 	 * @param {boolean} base64
-	 * @return {string}
+	 * @return {object}
 	 */
 	static async getPageSrc(hostId, pageLink, base64) {
 		switch (hostId) {
 			case MangaHere.id:
 				return await MangaHere.getPageSrc(pageLink, base64);
+			case MangaPark.id:
+				return await MangaPark.getPageSrc(pageLink, base64);
 		}
 	}
 };

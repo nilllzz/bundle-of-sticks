@@ -28,6 +28,31 @@
 .reader-top-title {
 	margin-left: 16px;
 	font-size: 24px;
+	display: flex;
+	align-items: center;
+}
+
+.reader-top-collapse {
+	font-size: 14px;
+	margin-right: 8px;
+}
+
+.reader-top-collapse:active {
+	color: var(--accent-color);
+}
+
+.reader-top-floating-control {
+	transition: all 0.1s ease-in-out;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	opacity: 0.3;
+	background-color: var(--main-bg-color);
+}
+
+.reader-top-floating-control:hover {
+	opacity: 1;
+	box-shadow: 0px 0px 10px var(--shadow-color);
 }
 
 .reader-top-main:hover > .reader-button-main {
@@ -173,6 +198,15 @@
 	align-items: center;
 	margin-right: 10px;
 	font-weight: bold;
+}
+
+.reader-page-control-link {
+	font-size: 14px;
+	margin-left: 8px;
+}
+
+.reader-page-control-link:active {
+	color: var(--accent-color);
 }
 
 .reader-page-input-main {

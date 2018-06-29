@@ -64,16 +64,16 @@ export default class ReaderSettings extends React.Component<ReaderSettingsProps,
 								Scroll
 							</ReaderCheckbox>
 							<ReaderCheckbox
-								checked={this.props.settings.pageAlignment === 'fit-horizontal'}
-								onChecked={() => this.onCheckAlignment('fit-horizontal')}
-							>
-								Fit horizontally
-							</ReaderCheckbox>
-							<ReaderCheckbox
 								checked={this.props.settings.pageAlignment === 'fit-vertical'}
 								onChecked={() => this.onCheckAlignment('fit-vertical')}
 							>
 								Fit vertically
+							</ReaderCheckbox>
+							<ReaderCheckbox
+								checked={this.props.settings.pageAlignment === 'fit-horizontal'}
+								onChecked={() => this.onCheckAlignment('fit-horizontal')}
+							>
+								Fit horizontally
 							</ReaderCheckbox>
 						</div>
 					</div>

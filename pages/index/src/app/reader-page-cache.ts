@@ -25,12 +25,6 @@ export default class ReaderPageCache {
 	private static _cachingPages: string[] = [];
 
 	public static async cacheChapter(chapter: Chapter, pageIndex: number) {
-		// clear cache for all pages before pageIndex, only cache forward
-		for (let i = 0; i < pageIndex; i++) {
-			const page = chapter.pages[i];
-			page.srcBase64 = null;
-		}
-
 		// cache up to 3 pages forward
 		for (let i = 0; i < 3; i++) {
 			const index = pageIndex + i + 1;

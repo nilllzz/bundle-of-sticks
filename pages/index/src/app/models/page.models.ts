@@ -21,25 +21,28 @@ export default class Page extends BaseModel {
 
 	public async loadSrc() {
 		if (!this.src) {
-			const result = await Api.getRequest('/api/manga/page/src', {
-				host: this.host.id,
-				page: this.link,
-			});
-			if (result.success) {
-				this.src = result.data;
-			}
+			await this.fetchSrc(false);
 		}
 	}
 
 	public async loadSrcBase64() {
 		if (!this.srcBase64) {
-			const result = await Api.getRequest('/api/manga/page/src', {
-				host: this.host.id,
-				page: this.link,
-				base64: true,
-			});
-			if (result.success) {
-				this.srcBase64 = result.data;
+			await this.fetchSrc(true);
+		}
+	}
+
+	private async fetchSrc(base64: boolean) {
+		const result = await Api.getRequest('/api/manga/page/src', {
+			host: this.host.id,
+			page: this.link,
+			base64: base64,
+		});
+		if (result.success) {
+			if (result.data.src) {
+				this.src = result.data.src;
+			}
+			if (result.data.srcBase64) {
+				this.srcBase64 = result.data.srcBase64;
 			}
 		}
 	}

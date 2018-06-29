@@ -17,6 +17,14 @@
 	width: 100%;
 	position: static;
 	overflow-y: auto;
+	outline: none;
+}
+
+.reader-base-content-top-collapsed {
+	height: 100vh;
+}
+
+.reader-base-content-top-visible {
 	height: calc(100vh - 56px);
 }
 
@@ -47,4 +55,37 @@
 .reader-base-image-fit-horizontal {
 	display: block;
 	width: 100%;
+}
+
+.reader-share-main {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.reader-share-content {
+	padding: 20px;
+	border-style: solid;
+	border-radius: 3px;
+	border-color: var(--reader-border-color);
+	box-shadow: 0px 0px 20px var(--shadow-color);
+	color: var(--default-gray);
+	min-width: 350px;
+	min-height: 170px;
+}
+
+.reader-share-title {
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 12px;
+}
+
+.reader-share-fail-controls {
+	margin-top: 20px;
+}
+
+.reader-share-fail-controls > * {
+	margin-right: 16px;
 }

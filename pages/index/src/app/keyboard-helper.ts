@@ -3,6 +3,9 @@ export class Keys {
 	public static readonly Enter = 13;
 	public static readonly Escape = 27;
 
+	// letters
+	public static readonly T = 84;
+
 	// arrows
 	public static readonly ArrowLeft = 37;
 	public static readonly ArrowRight = 39;

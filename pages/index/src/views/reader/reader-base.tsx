@@ -11,18 +11,21 @@ import ReaderNotFound from '../../components/reader/reader-not-found';
 import AppLoading from '../../components/app/app-loading';
 import ReaderSettings, { Settings } from '../../components/reader/reader-settings';
 import LocalState from '../../app/local-state';
-import ReadingRecords from '../../app/reading-records';
+import ReadingRecords, { ReadingRecord } from '../../app/reading-records';
 import ReaderPageCache from '../../app/reader-page-cache';
 import { Keys, KeyboardEventBus } from '../../app/keyboard-helper';
 import ReaderPageInput from '../../components/reader/reader-page-input';
+import Growls from '../shell/growls';
 
 type ReaderBaseState = {
 	manga: Manga;
 	outline: Folder[];
-	visible: boolean;
-	outlineVisible: boolean;
 	loading: boolean;
 	pageLoadError: boolean;
+
+	visible: boolean;
+	outlineVisible: boolean;
+	topCollapsed: boolean;
 
 	currentFolder: Folder;
 	currentVolume: Volume;
@@ -46,12 +49,14 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		) as Settings;
 
 		this.state = {
-			visible: false,
 			outline: null,
 			manga: null,
-			outlineVisible: false,
 			loading: true,
 			pageLoadError: false,
+
+			visible: false,
+			outlineVisible: false,
+			topCollapsed: false,
 
 			currentFolder: null,
 			currentVolume: null,
@@ -70,11 +75,12 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.onRefreshPage = this.onRefreshPage.bind(this);
 		this.onUpdateSettings = this.onUpdateSettings.bind(this);
 		this.onKeyDownContentHandler = this.onKeyDownContentHandler.bind(this);
+		this.onToggleCollapseTop = this.onToggleCollapseTop.bind(this);
 
 		ReaderBase._handle = this;
 	}
 
-	public static show(manga: Manga, outline: Folder[]) {
+	public static show(manga: Manga, outline: Folder[], record: ReadingRecord = null) {
 		// apply overflow hidden to body to make it not scrollable
 		const bodyElement = document.getElementsByTagName('body')[0];
 		bodyElement.style.overflow = 'hidden';
@@ -91,7 +97,9 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				mainElement.focus();
 
 				// try to load reading record
-				const record = ReadingRecords.read(manga);
+				if (!record) {
+					record = ReadingRecords.read(manga);
+				}
 				if (record) {
 					const folder = outline.find(f => f.getId() === record.folderId);
 					if (folder) {
@@ -168,6 +176,35 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		container.scrollTo(0, 0);
 	}
 
+	private getShareLink() {
+		if (
+			!this.state.manga ||
+			!this.state.currentFolder ||
+			!this.state.currentVolume ||
+			!this.state.currentChapter
+		) {
+			return null;
+		}
+		return (
+			location.protocol +
+			'//' +
+			location.hostname +
+			(location.port ? ':' + location.port : '') +
+			'/reader/' +
+			encodeURIComponent(this.state.manga.host.id) +
+			'/' +
+			encodeURIComponent(this.state.manga.link) +
+			'/' +
+			encodeURIComponent(this.state.currentFolder.getId()) +
+			'/' +
+			this.state.currentVolume.number.toString() +
+			'/' +
+			this.state.currentChapter.number.toString() +
+			'/' +
+			(this.state.currentPageIndex + 1).toString() // do not show the index
+		);
+	}
+
 	private advancePage() {
 		let newPageIndex = this.state.currentPageIndex + 1;
 
@@ -187,7 +224,11 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				);
 				// end of the last volume's last chapter
 				if (volumePosition === 0) {
-					alert('huzzah');
+					Growls.add(
+						'End of Manga',
+						'You have reached the last page of "' + this.state.manga.name + '".'
+					);
+					return;
 				} else {
 					newVolume = this.state.currentFolder.volumes[volumePosition - 1];
 					newChapter = newVolume.chapters[newVolume.chapters.length - 1];
@@ -432,7 +473,6 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 
 	private onKeyDownContentHandler(e: React.KeyboardEvent<HTMLDivElement>) {
 		if (!this.state.loading) {
-			console.log('Key pressed:', e.keyCode, e.key);
 			this.keyboardEventBus.push(e.keyCode);
 			switch (e.keyCode) {
 				case Keys.ArrowRight:
@@ -441,8 +481,17 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				case Keys.ArrowLeft:
 					this.previousPage();
 					break;
+				case Keys.T:
+					this.onToggleCollapseTop();
+					break;
 			}
 		}
+	}
+
+	private onToggleCollapseTop() {
+		this.setState({
+			topCollapsed: !this.state.topCollapsed,
+		});
 	}
 
 	private renderMain() {
@@ -465,6 +514,10 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				? this.state.currentChapter.pages.length
 				: 0;
 
+		const contentClass =
+			'reader-base-content reader-base-content-top-' +
+			(this.state.topCollapsed ? 'collapsed' : 'visible');
+
 		return (
 			<div
 				className="reader-base-main"
@@ -480,10 +533,13 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					settings={this.state.settings}
 					currentPage={this.state.currentPageIndex + 1}
 					pageCount={pageCount}
+					shareLink={this.getShareLink()}
+					collapsed={this.state.topCollapsed}
+					toggleCollapsed={this.onToggleCollapseTop}
 				/>
 				<div className="reader-base-body">
 					<ReaderOutline
-						visible={this.state.outlineVisible}
+						visible={this.state.outlineVisible && !this.state.topCollapsed}
 						outline={this.state.outline}
 						currentFolder={this.state.currentFolder}
 						currentVolume={this.state.currentVolume}
@@ -493,7 +549,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 						onSelectVolume={this.onSelectVolume}
 						flatOutline={this.state.settings.flatOutline}
 					/>
-					<div className="reader-base-content" id="reader-content">
+					<div className={contentClass} id="reader-content" tabIndex={1}>
 						{this.state.loading ? (
 							<div className="reader-base-loading">
 								<AppLoading />
