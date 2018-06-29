@@ -136,17 +136,9 @@
 }
 
 .reader-settings-main {
-	position: fixed;
 	z-index: 99;
 	top: 66px;
 	right: 30px;
-	border-style: solid;
-	border-radius: 3px;
-	border-width: 2px;
-	border-color: var(--reader-border-color);
-	box-shadow: 0px 0px 20px var(--shadow-color);
-	background-color: var(--main-bg-color);
-	padding: 20px;
 }
 
 .reader-settings-title {
@@ -173,4 +165,36 @@
 
 .reader-checkbox-icon {
 	margin-right: 4px;
+}
+
+.reader-page-control-main {
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	margin-right: 10px;
+	font-weight: bold;
+}
+
+.reader-page-input-main {
+	z-index: 99;
+	top: 66px;
+	right: 30px;
+}
+
+.reader-page-input-header {
+	display: flex;
+	align-items: center;
+}
+
+.reader-page-input-title {
+	font-size: 20px;
+	font-weight: bold;
+	margin-right: 30px;
+}
+
+.reader-page-input-body {
+	display: flex;
+	justify-content: center;
+	margin-top: 6px;
+	font-size: 24px;
 }

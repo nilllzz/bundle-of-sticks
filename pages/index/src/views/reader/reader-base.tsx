@@ -13,6 +13,8 @@ import ReaderSettings, { Settings } from '../../components/reader/reader-setting
 import LocalState from '../../app/local-state';
 import ReadingRecords from '../../app/reading-records';
 import ReaderPageCache from '../../app/reader-page-cache';
+import { Keys, KeyboardEventBus } from '../../app/keyboard-helper';
+import ReaderPageInput from '../../components/reader/reader-page-input';
 
 type ReaderBaseState = {
 	manga: Manga;
@@ -32,6 +34,8 @@ type ReaderBaseState = {
 
 export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 	private static _handle: ReaderBase;
+
+	private keyboardEventBus = new KeyboardEventBus();
 
 	constructor(props: any) {
 		super(props);
@@ -60,10 +64,12 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.onClickCloseHandler = this.onClickCloseHandler.bind(this);
 		this.onClickToggleOutlineHandler = this.onClickToggleOutlineHandler.bind(this);
 		this.advancePage = this.advancePage.bind(this);
+		this.onSelectPage = this.onSelectPage.bind(this);
 		this.onSelectChapter = this.onSelectChapter.bind(this);
 		this.onSelectVolume = this.onSelectVolume.bind(this);
 		this.onRefreshPage = this.onRefreshPage.bind(this);
 		this.onUpdateSettings = this.onUpdateSettings.bind(this);
+		this.onKeyDownContentHandler = this.onKeyDownContentHandler.bind(this);
 
 		ReaderBase._handle = this;
 	}
@@ -80,6 +86,10 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				outline: outline,
 			},
 			() => {
+				// focus on the reader's main div so key events work
+				const mainElement = document.getElementById('reader-main');
+				mainElement.focus();
+
 				// try to load reading record
 				const record = ReadingRecords.read(manga);
 				if (record) {
@@ -125,24 +135,37 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					currentPageIndex: pageIndex,
 				};
 
-				this.setState(newState, () => {
-					this.cacheChapter();
-					if (!this.state.pageLoadError) {
-						this.updateRecord();
-					}
-				});
+				this.setState(newState, this.changedPage);
 			}
 		);
 	}
 
-	private updateRecord() {
-		ReadingRecords.track(
-			this.state.manga,
-			this.state.currentPageIndex,
-			this.state.currentChapter,
-			this.state.currentVolume,
-			this.state.currentFolder
-		);
+	private async tryLoadPage(page: Page) {
+		if (page.srcBase64) {
+			return true;
+		}
+		await page.loadSrc();
+		return !!page.src;
+	}
+
+	private changedPage() {
+		if (this.state.settings.cacheChapter) {
+			ReaderPageCache.cacheChapter(this.state.currentChapter, this.state.currentPageIndex);
+		}
+		if (!this.state.pageLoadError) {
+			// update reading record
+			ReadingRecords.track(
+				this.state.manga,
+				this.state.currentPageIndex,
+				this.state.currentChapter,
+				this.state.currentVolume,
+				this.state.currentFolder
+			);
+		}
+
+		// scroll to top of page
+		const container = document.getElementById('reader-content');
+		container.scrollTo(0, 0);
 	}
 
 	private advancePage() {
@@ -190,12 +213,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 							loading: false,
 							pageLoadError: !pageLoadSuccess,
 						},
-						() => {
-							this.cacheChapter();
-							if (!this.state.pageLoadError) {
-								this.updateRecord();
-							}
-						}
+						this.changedPage
 					);
 				}
 			);
@@ -214,35 +232,89 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 								loading: false,
 								pageLoadError: !pageLoadSuccess,
 							},
-							() => {
-								this.cacheChapter();
-								if (!this.state.pageLoadError) {
-									this.updateRecord();
-								}
-							}
+							this.changedPage
 						);
 					} else {
-						this.cacheChapter();
-						if (!this.state.pageLoadError) {
-							this.updateRecord();
-						}
+						this.changedPage();
 					}
 				}
 			);
 		}
 	}
 
-	private async tryLoadPage(page: Page) {
-		if (page.srcBase64) {
-			return true;
+	private previousPage() {
+		// check if the current reading position is the very start of the current folder
+		// if that's the case, do nothing
+		if (
+			this.state.currentPageIndex === 0 &&
+			this.state.currentVolume.chapters.indexOf(this.state.currentChapter) ===
+				this.state.currentVolume.chapters.length - 1 &&
+			this.state.currentFolder.volumes.indexOf(this.state.currentVolume) ===
+				this.state.currentFolder.volumes.length - 1
+		) {
+			return;
 		}
-		await page.loadSrc();
-		return !!page.src;
-	}
+		let newPageIndex = this.state.currentPageIndex - 1;
+		if (newPageIndex < 0) {
+			let newVolume = this.state.currentVolume;
+			let newChapter = this.state.currentChapter;
+			// go to the previous chapter
+			let newChapterIndex =
+				this.state.currentVolume.chapters.indexOf(this.state.currentChapter) - 1;
 
-	private cacheChapter() {
-		if (this.state.settings.cacheChapter) {
-			ReaderPageCache.cacheChapter(this.state.currentChapter, this.state.currentPageIndex);
+			if (newChapterIndex === this.state.currentVolume.chapters.length) {
+				// go to the previous volume
+				newChapterIndex = 0; // last chapter of prev volume
+				const newVolumeIndex =
+					this.state.currentFolder.volumes.indexOf(this.state.currentVolume) - 1;
+				newVolume = this.state.currentFolder.volumes[newVolumeIndex];
+			}
+			newChapter = this.state.currentVolume.chapters[newChapterIndex];
+
+			this.setState(
+				{
+					loading: true,
+					currentVolume: newVolume,
+					currentChapter: newChapter,
+				},
+				async () => {
+					await this.state.currentChapter.loadPages();
+					newPageIndex = this.state.currentChapter.pages.length - 1;
+					const pageLoadSuccess = await this.tryLoadPage(
+						this.state.currentChapter.pages[newPageIndex]
+					);
+					this.setState(
+						{
+							loading: false,
+							pageLoadError: !pageLoadSuccess,
+							currentPageIndex: newPageIndex,
+						},
+						this.changedPage
+					);
+				}
+			);
+		} else {
+			const newPage = this.state.currentChapter.pages[newPageIndex];
+			this.setState(
+				{
+					currentPageIndex: newPageIndex,
+					loading: !newPage.src && !newPage.srcBase64,
+				},
+				async () => {
+					const pageLoadSuccess = await this.tryLoadPage(newPage);
+					if (pageLoadSuccess === this.state.pageLoadError || this.state.loading) {
+						this.setState(
+							{
+								loading: false,
+								pageLoadError: !pageLoadSuccess,
+							},
+							this.changedPage
+						);
+					} else {
+						this.changedPage();
+					}
+				}
+			);
 		}
 	}
 
@@ -263,6 +335,30 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.setState({
 			outlineVisible: !this.state.outlineVisible,
 		});
+	}
+
+	private async onSelectPage(pageIndex: number) {
+		const newPage = this.state.currentChapter.pages[pageIndex];
+		this.setState(
+			{
+				currentPageIndex: pageIndex,
+				loading: !newPage.src && !newPage.srcBase64,
+			},
+			async () => {
+				const pageLoadSuccess = await this.tryLoadPage(newPage);
+				if (pageLoadSuccess === this.state.pageLoadError || this.state.loading) {
+					this.setState(
+						{
+							loading: false,
+							pageLoadError: !pageLoadSuccess,
+						},
+						this.changedPage
+					);
+				} else {
+					this.changedPage();
+				}
+			}
+		);
 	}
 
 	private onSelectChapter(newChapter: Chapter) {
@@ -292,12 +388,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 										loading: false,
 										pageLoadError: !pageLoadSuccess,
 									},
-									() => {
-										this.cacheChapter();
-										if (!this.state.pageLoadError) {
-											this.updateRecord();
-										}
-									}
+									this.changedPage
 								);
 							}
 						);
@@ -326,12 +417,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 						loading: false,
 						pageLoadError: !pageLoadSuccess,
 					},
-					() => {
-						this.cacheChapter();
-						if (!this.state.pageLoadError) {
-							this.updateRecord();
-						}
-					}
+					this.changedPage
 				);
 			}
 		);
@@ -342,6 +428,21 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.setState({
 			settings: newSettings,
 		});
+	}
+
+	private onKeyDownContentHandler(e: React.KeyboardEvent<HTMLDivElement>) {
+		if (!this.state.loading) {
+			console.log('Key pressed:', e.keyCode, e.key);
+			this.keyboardEventBus.push(e.keyCode);
+			switch (e.keyCode) {
+				case Keys.ArrowRight:
+					this.advancePage();
+					break;
+				case Keys.ArrowLeft:
+					this.previousPage();
+					break;
+			}
+		}
 	}
 
 	private renderMain() {
@@ -359,14 +460,26 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			}
 		}
 
+		const pageCount =
+			this.state.currentChapter && this.state.currentChapter.pages
+				? this.state.currentChapter.pages.length
+				: 0;
+
 		return (
-			<div className="reader-base-main">
+			<div
+				className="reader-base-main"
+				tabIndex={0}
+				onKeyDown={this.onKeyDownContentHandler}
+				id="reader-main"
+			>
 				<ReaderTop
 					manga={this.state.manga}
 					onClose={this.onClickCloseHandler}
 					onToggleOutline={this.onClickToggleOutlineHandler}
 					updateSettings={this.onUpdateSettings}
 					settings={this.state.settings}
+					currentPage={this.state.currentPageIndex + 1}
+					pageCount={pageCount}
 				/>
 				<div className="reader-base-body">
 					<ReaderOutline
@@ -378,8 +491,9 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 						currentPageIndex={this.state.currentPageIndex}
 						onSelectChapter={this.onSelectChapter}
 						onSelectVolume={this.onSelectVolume}
+						flatOutline={this.state.settings.flatOutline}
 					/>
-					<div className="reader-base-content">
+					<div className="reader-base-content" id="reader-content">
 						{this.state.loading ? (
 							<div className="reader-base-loading">
 								<AppLoading />
@@ -397,6 +511,11 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 								src={pageSrc}
 							/>
 						)}
+						<ReaderPageInput
+							keyboardEventBus={this.keyboardEventBus}
+							onSelect={this.onSelectPage}
+							pageCount={pageCount}
+						/>
 					</div>
 				</div>
 			</div>

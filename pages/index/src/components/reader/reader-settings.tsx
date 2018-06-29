@@ -5,6 +5,7 @@ import { Fade } from 'react-bootstrap';
 export type Settings = {
 	pageAlignment: 'scroll' | 'fit-horizontal' | 'fit-vertical';
 	cacheChapter: boolean;
+	flatOutline: boolean;
 };
 
 type ReaderSettingsProps = {
@@ -19,12 +20,14 @@ export default class ReaderSettings extends React.Component<ReaderSettingsProps,
 
 		this.onCheckAlignment = this.onCheckAlignment.bind(this);
 		this.onCheckCacheChapter = this.onCheckCacheChapter.bind(this);
+		this.onCheckFlatOutline = this.onCheckFlatOutline.bind(this);
 	}
 
 	public static getDefaultSettings(): Settings {
 		return {
 			pageAlignment: 'scroll',
 			cacheChapter: false,
+			flatOutline: false,
 		};
 	}
 
@@ -40,10 +43,16 @@ export default class ReaderSettings extends React.Component<ReaderSettingsProps,
 		this.props.updateSettings(settings);
 	}
 
+	private onCheckFlatOutline() {
+		const settings = this.props.settings;
+		settings.flatOutline = !this.props.settings.flatOutline;
+		this.props.updateSettings(settings);
+	}
+
 	public render() {
 		return (
 			<Fade in={this.props.visible} unmountOnExit>
-				<div className="reader-settings-main">
+				<div className="reader-settings-main reader-popup">
 					<div className="reader-settings-title">Settings</div>
 					<div className="reader-settings-section">
 						<div className="reader-settings-section-header">Page alignment</div>
@@ -76,6 +85,17 @@ export default class ReaderSettings extends React.Component<ReaderSettingsProps,
 								onChecked={this.onCheckCacheChapter}
 							>
 								Cache Chapter
+							</ReaderCheckbox>
+						</div>
+					</div>
+					<div className="reader-settings-section">
+						<div className="reader-settings-section-header">Outline</div>
+						<div className="reader-settings-section-body">
+							<ReaderCheckbox
+								checked={this.props.settings.flatOutline}
+								onChecked={this.onCheckFlatOutline}
+							>
+								Only show chapters
 							</ReaderCheckbox>
 						</div>
 					</div>

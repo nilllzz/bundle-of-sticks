@@ -106,6 +106,14 @@
 	margin-top: 20px;
 }
 
+.manga-view-page-controls-record {
+	margin-bottom: 10px;
+	border-left-style: solid;
+	border-left-width: 2px;
+	border-left-color: var(--accent-color);
+	padding-left: 12px;
+}
+
 .manga-nsfw-main {
 	display: flex;
 	justify-content: center;

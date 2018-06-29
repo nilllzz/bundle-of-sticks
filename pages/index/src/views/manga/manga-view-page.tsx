@@ -13,6 +13,8 @@ import AppExternalLink from '../../components/app/app-external-link';
 import MangaSummary from '../../components/manga/manga-summary';
 import AppButton from '../../components/app/app-button';
 import ReaderBase from '../reader/reader-base';
+import ReadingRecords, { ReadingRecord } from '../../app/reading-records';
+import StringHelper from '../../app/string-helper';
 
 type MangaViewPageState = {
 	info: Info;
@@ -20,6 +22,7 @@ type MangaViewPageState = {
 	imgError: boolean;
 	hasBookmark: boolean;
 	nsfwConfirmed: boolean;
+	record: ReadingRecord;
 };
 
 export default class MangaViewPage extends React.Component<any, MangaViewPageState> {
@@ -32,11 +35,13 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 			imgError: false,
 			hasBookmark: false,
 			nsfwConfirmed: false,
+			record: null,
 		};
 
 		this.onImgLoadError = this.onImgLoadError.bind(this);
 		this.toggleBookmark = this.toggleBookmark.bind(this);
 		this.onContinueNSFW = this.onContinueNSFW.bind(this);
+		this.onUpdateReadingRecord = this.onUpdateReadingRecord.bind(this);
 	}
 
 	async componentDidMount() {
@@ -46,12 +51,23 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		const response = await Api.getRequest('/api/manga/info', { host: provider, manga: link });
 		const info = new Info(response.data);
 
+		const record = ReadingRecords.read(info.manga);
+
 		this.setState({
 			info: info,
 			loading: false,
 			hasBookmark: this.hasBookmark(info.manga),
 			imgError: !info.coverImg,
+			record: record,
 		});
+
+		// if the user opens the reader from here, track changes to the reading record
+		ReadingRecords.subscribe(info.manga, this.onUpdateReadingRecord);
+	}
+
+	componentWillUnmount() {
+		// clear event bus subscription
+		ReadingRecords.unsubscribe(this.state.info.manga);
 	}
 
 	private hasBookmark(manga: Manga) {
@@ -86,6 +102,12 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 	private onContinueNSFW() {
 		this.setState({
 			nsfwConfirmed: true,
+		});
+	}
+
+	private onUpdateReadingRecord(record: ReadingRecord) {
+		this.setState({
+			record: record,
 		});
 	}
 
@@ -159,6 +181,56 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 				<div className="manga-view-page-info-list">{artistElements}</div>
 			</div>
 		);
+	}
+
+	private renderControls() {
+		if (this.state.info.unavailable) {
+			return (
+				<span className="accent-color-text">
+					<Glyphicon glyph="lock" /> {this.state.info.manga.host.getProvider().name} has
+					marked this Manga as <strong>unavailable</strong>.{' '}
+				</span>
+			);
+		}
+
+		const record = this.state.record;
+		if (!record) {
+			// show start reading button if no reading record exists
+			return (
+				<AppButton
+					main
+					onClick={() => {
+						ReaderBase.show(this.state.info.manga, this.state.info.folders);
+					}}
+				>
+					Start reading
+				</AppButton>
+			);
+		} else {
+			const folder = this.state.info.folders.find(f => f.getId() === record.folderId);
+			const volume = folder.volumes.find(v => v.number === record.volume);
+			const chapter = volume.chapters.find(c => c.number === record.chapter);
+
+			return (
+				<div>
+					<div className="manga-view-page-controls-record text-muted">
+						<div>Page {(record.page + 1).toString()}</div>
+						<div>
+							Chapter {StringHelper.padStart(chapter.number.toString(), '0', 3)}
+						</div>
+						{!!chapter.name ? <div>{chapter.name}</div> : null}
+					</div>
+					<AppButton
+						main
+						onClick={() => {
+							ReaderBase.show(this.state.info.manga, this.state.info.folders);
+						}}
+					>
+						Continue reading
+					</AppButton>
+				</div>
+			);
+		}
 	}
 
 	public render() {
@@ -249,24 +321,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 					<div className="manga-view-page-lower">
 						<MangaSummary summary={this.state.info.summary} />
 					</div>
-					<div className="manga-view-page-controls">
-						{!this.state.info.unavailable ? (
-							<AppButton
-								main={true}
-								onClick={() => {
-									ReaderBase.show(this.state.info.manga, this.state.info.folders);
-								}}
-							>
-								Start reading
-							</AppButton>
-						) : (
-							<span className="accent-color-text">
-								<Glyphicon glyph="lock" />{' '}
-								{this.state.info.manga.host.getProvider().name} has marked this
-								Manga as <strong>unavailable</strong>.{' '}
-							</span>
-						)}
-					</div>
+					<div className="manga-view-page-controls">{this.renderControls()}</div>
 				</div>
 			</div>
 		);

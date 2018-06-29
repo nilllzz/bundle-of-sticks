@@ -2,6 +2,8 @@ import * as React from 'react';
 import ReaderButton from './reader-button';
 import Manga from '../../app/models/manga.model';
 import ReaderSettings, { Settings } from './reader-settings';
+import ReaderPageControl from './reader-page-control';
+import { KeyboardEventBus } from '../../app/keyboard-helper';
 
 type ReaderTopProps = {
 	manga: Manga;
@@ -9,6 +11,8 @@ type ReaderTopProps = {
 	onClose: () => void;
 	onToggleOutline: () => void;
 	updateSettings: (newSettings: Settings) => void;
+	currentPage: number;
+	pageCount: number;
 };
 
 type ReaderTopState = {
@@ -40,6 +44,10 @@ export default class ReaderTop extends React.Component<ReaderTopProps, ReaderTop
 					</span>
 				</div>
 				<div className="reader-top-right">
+					<ReaderPageControl
+						currentPage={this.props.currentPage}
+						pageCount={this.props.pageCount}
+					/>
 					<ReaderButton glyph="cog" onClick={this.onToggleSettingsHandler} />
 					<ReaderButton glyph="remove" onClick={this.props.onClose} />
 				</div>

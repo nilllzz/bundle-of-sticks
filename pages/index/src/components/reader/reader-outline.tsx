@@ -14,12 +14,15 @@ type ReaderOutlineProps = {
 	currentPageIndex: number;
 	onSelectChapter: (chapter: Chapter) => void;
 	onSelectVolume: (volume: Volume) => void;
+	flatOutline: boolean;
 };
 
 export default class ReaderOutline extends React.Component<ReaderOutlineProps, any> {
 	private renderFolder(folder: Folder) {
 		if (folder.volumes.length === 1) {
 			return this.renderVolume(folder.volumes[0], true);
+		} else if (this.props.flatOutline) {
+			return folder.volumes.map(v => this.renderVolume(v, true));
 		} else {
 			return (
 				<ReaderOutlineItem

@@ -1,11 +1,10 @@
 import Manga from './models/manga.model';
-import Page from './models/page.models';
 import Chapter from './models/chapter.model';
 import Volume from './models/volume.model';
 import Folder from './models/folder.model';
 import LocalState from './local-state';
 
-type ReadingRecord = {
+export type ReadingRecord = {
 	manga: Manga;
 	page: number;
 	chapter: number;
@@ -15,8 +14,14 @@ type ReadingRecord = {
 	date: number;
 };
 
+type EventSubscription = {
+	manga: Manga;
+	onUpdate: (record: ReadingRecord) => void;
+};
+
 export default class ReadingRecords {
 	private static buffer: ReadingRecord[] = null;
+	private static subscriptions: EventSubscription[] = [];
 
 	private static loadBuffer() {
 		if (!this.buffer) {
@@ -53,10 +58,29 @@ export default class ReadingRecords {
 		}
 		this.buffer.push(record);
 		this.writeBuffer();
+
+		// fire events
+		const subscription = this.subscriptions.find(s => s.manga.getId() === manga.getId());
+		if (subscription) {
+			subscription.onUpdate(record);
+		}
 	}
 
 	public static read(manga: Manga): ReadingRecord {
 		this.loadBuffer();
 		return this.buffer.find(r => new Manga(r.manga).getId() === manga.getId());
+	}
+
+	public static subscribe(manga: Manga, eventHandler: (record: ReadingRecord) => void) {
+		if (!this.subscriptions.some(s => s.manga.getId() === manga.getId())) {
+			this.subscriptions.push({
+				manga: manga,
+				onUpdate: eventHandler,
+			});
+		}
+	}
+
+	public static unsubscribe(manga: Manga) {
+		this.subscriptions = this.subscriptions.filter(s => s.manga.getId() !== manga.getId());
 	}
 }
