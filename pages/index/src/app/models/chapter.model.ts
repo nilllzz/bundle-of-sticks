@@ -29,8 +29,12 @@ export default class Chapter extends BaseModel {
 				host: this.host.id,
 				chapter: this.link,
 			});
+			if (!result.success) {
+				return false;
+			}
 			this.pages = Page.populate(result.data);
 		}
+		return true;
 	}
 }
 

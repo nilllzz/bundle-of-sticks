@@ -79,6 +79,8 @@ export default class ReaderPageInput extends React.Component<
 				let newPageNumber = Number.parseInt(this.state.input + numeric.toString());
 				if (newPageNumber > this.props.pageCount) {
 					newPageNumber = this.props.pageCount;
+				} else if (newPageNumber < 1) {
+					newPageNumber = 1;
 				}
 				this.setState({
 					input: newPageNumber.toString(),

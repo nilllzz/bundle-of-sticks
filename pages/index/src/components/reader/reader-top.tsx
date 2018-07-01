@@ -16,27 +16,11 @@ type ReaderTopProps = {
 	shareLink: string;
 	collapsed: boolean;
 	toggleCollapsed: () => void;
-};
-
-type ReaderTopState = {
 	settingsVisible: boolean;
+	toggleSettingsVisible: () => void;
 };
 
-export default class ReaderTop extends React.Component<ReaderTopProps, ReaderTopState> {
-	constructor(props: ReaderTopProps) {
-		super(props);
-
-		this.state = { settingsVisible: false };
-
-		this.onToggleSettingsHandler = this.onToggleSettingsHandler.bind(this);
-	}
-
-	private onToggleSettingsHandler() {
-		this.setState({
-			settingsVisible: !this.state.settingsVisible,
-		});
-	}
-
+export default class ReaderTop extends React.Component<ReaderTopProps, any> {
 	public render() {
 		if (this.props.collapsed) {
 			return (
@@ -65,13 +49,13 @@ export default class ReaderTop extends React.Component<ReaderTopProps, ReaderTop
 						pageCount={this.props.pageCount}
 						shareLink={this.props.shareLink}
 					/>
-					<ReaderButton glyph="cog" onClick={this.onToggleSettingsHandler} />
+					<ReaderButton glyph="cog" onClick={this.props.toggleSettingsVisible} />
 					<ReaderButton glyph="remove" onClick={this.props.onClose} />
 				</div>
 				<ReaderSettings
 					updateSettings={this.props.updateSettings}
 					settings={this.props.settings}
-					visible={this.state.settingsVisible}
+					visible={this.props.settingsVisible}
 				/>
 			</div>
 		);

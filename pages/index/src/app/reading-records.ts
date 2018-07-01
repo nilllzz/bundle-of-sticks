@@ -95,6 +95,11 @@ export default class ReadingRecords {
 		return results;
 	}
 
+	public static getLength() {
+		this.loadBuffer();
+		return this.buffer.length;
+	}
+
 	public static subscribe(manga: Manga, eventHandler: (record: ReadingRecord) => void) {
 		if (!this.subscriptions.some(s => s.manga.getId() === manga.getId())) {
 			this.subscriptions.push({

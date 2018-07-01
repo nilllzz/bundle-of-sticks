@@ -22,6 +22,7 @@ type MangaViewPageState = {
 	hasBookmark: boolean;
 	nsfwConfirmed: boolean;
 	record: ReadingRecord;
+	fetchError: boolean;
 };
 
 export default class MangaViewPage extends React.Component<any, MangaViewPageState> {
@@ -34,35 +35,50 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 			hasBookmark: false,
 			nsfwConfirmed: false,
 			record: null,
+			fetchError: false,
 		};
 
 		this.toggleBookmark = this.toggleBookmark.bind(this);
 		this.onContinueNSFW = this.onContinueNSFW.bind(this);
 		this.onUpdateReadingRecord = this.onUpdateReadingRecord.bind(this);
+		this.onClickRetryHandler = this.onClickRetryHandler.bind(this);
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
+		this.loadInfo();
+	}
+
+	componentWillUnmount() {
+		if (this.state.info) {
+			// clear event bus subscription
+			ReadingRecords.unsubscribe(this.state.info.manga);
+		}
+	}
+
+	private async loadInfo() {
 		const provider = this.props.match.params.provider;
 		const link = this.props.match.params.link;
 
 		const info = await Manga.fetchInfo(provider, link);
+		if (!info) {
+			this.setState({
+				loading: false,
+				fetchError: true,
+			});
+		} else {
+			const record = ReadingRecords.read(info.manga);
 
-		const record = ReadingRecords.read(info.manga);
+			this.setState({
+				info: info,
+				loading: false,
+				fetchError: false,
+				hasBookmark: this.hasBookmark(info.manga),
+				record: record,
+			});
 
-		this.setState({
-			info: info,
-			loading: false,
-			hasBookmark: this.hasBookmark(info.manga),
-			record: record,
-		});
-
-		// if the user opens the reader from here, track changes to the reading record
-		ReadingRecords.subscribe(info.manga, this.onUpdateReadingRecord);
-	}
-
-	componentWillUnmount() {
-		// clear event bus subscription
-		ReadingRecords.unsubscribe(this.state.info.manga);
+			// if the user opens the reader from here, track changes to the reading record
+			ReadingRecords.subscribe(info.manga, this.onUpdateReadingRecord);
+		}
 	}
 
 	private hasBookmark(manga: Manga) {
@@ -98,6 +114,17 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		this.setState({
 			record: record,
 		});
+	}
+
+	private onClickRetryHandler() {
+		this.setState(
+			{
+				loading: true,
+			},
+			() => {
+				this.loadInfo();
+			}
+		);
 	}
 
 	private renderAuthors() {
@@ -249,6 +276,28 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 						</div>
 						<div className="manga-view-page-lower">
 							<div className="manga-view-page-summary-placeholder content-placeholder" />
+						</div>
+					</div>
+				</div>
+			);
+		}
+
+		if (this.state.fetchError) {
+			return (
+				<div className="manga-view-page-main shell-content-padded">
+					<div className="manga-view-page-title page-main-header">
+						Error loading Manga information
+					</div>
+					<div className="manga-view-page-body">
+						The server responded with an error while fetching information about this
+						Manga.
+						<div className="manga-view-page-controls manga-view-page-controls-error">
+							<AppButton onClick={this.onClickRetryHandler} main icon="repeat">
+								Retry
+							</AppButton>
+							<Link to="/" className="unstyled-link">
+								<AppButton icon="home">Homepage</AppButton>
+							</Link>
 						</div>
 					</div>
 				</div>

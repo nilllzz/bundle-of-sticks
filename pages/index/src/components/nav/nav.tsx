@@ -20,9 +20,9 @@ export default class Nav extends React.Component<NavProps, any> {
 					/>
 					<NavSeparator />
 					<NavItem
-						text="Bookmarks"
+						text="Collection"
 						icon="bookmark"
-						linkTo="/bookmarks"
+						linkTo="/collection"
 						location={this.props.location}
 					/>
 					<NavItem

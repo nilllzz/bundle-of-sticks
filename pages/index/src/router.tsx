@@ -6,6 +6,7 @@ import NotFoundPage from './views/not-found/not-found-page';
 import SearchPage from './views/search/search-page';
 import MangaViewPage from './views/manga/manga-view-page';
 import ReaderShare from './views/reader/reader-share';
+import CollectionPage from './views/collection/collection-page';
 
 export default class PageRouter extends React.Component<any, any> {
 	constructor(props: any) {
@@ -30,6 +31,7 @@ export default class PageRouter extends React.Component<any, any> {
 										path="/manga/:provider/:link"
 										component={MangaViewPage}
 									/>
+									<Route path="/collection" exact component={CollectionPage} />
 									<Route component={NotFoundPage} />
 								</Switch>
 							</Shell>

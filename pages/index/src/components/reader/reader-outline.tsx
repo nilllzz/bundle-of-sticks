@@ -48,7 +48,7 @@ export default class ReaderOutline extends React.Component<ReaderOutlineProps, R
 	private renderFolder(folder: Folder) {
 		return (
 			<ReaderOutlineItem
-				key={folder.number}
+				key={folder.getId()}
 				glyph="folder-open"
 				textSub={folder.name}
 				textMain={'Folder ' + folder.number.toString()}
@@ -56,12 +56,12 @@ export default class ReaderOutline extends React.Component<ReaderOutlineProps, R
 				collapsed={!this.state.openedFolders.includes(folder.getId())}
 				onClick={() => this.toggleOpenFolder(folder)}
 			>
-				{folder.volumes.map(v => this.renderVolume(v, folder.volumes.length === 1))}
+				{folder.volumes.map(v => this.renderVolume(v, folder, folder.volumes.length === 1))}
 			</ReaderOutlineItem>
 		);
 	}
 
-	private renderVolume(volume: Volume, onlyVolume: boolean) {
+	private renderVolume(volume: Volume, parent: Folder, onlyVolume: boolean) {
 		if (onlyVolume || this.props.flatOutline) {
 			return volume.chapters.map(c => this.renderChapter(c));
 		} else {
@@ -69,7 +69,7 @@ export default class ReaderOutline extends React.Component<ReaderOutlineProps, R
 				volume.number > -1 ? 'Volume ' + volume.number.toString() : 'Rogue chapters';
 			return (
 				<ReaderOutlineItem
-					key={volume.number}
+					key={volume.number.toString() + parent.getId()}
 					glyph="book"
 					textSub=""
 					textMain={title}
@@ -90,7 +90,7 @@ export default class ReaderOutline extends React.Component<ReaderOutlineProps, R
 				textMain={'Ch. ' + StringHelper.padStart(chapter.number.toString(), '0', 3)}
 				textSub={chapter.name}
 				active={this.props.currentChapter === chapter}
-				collapsed={true}
+				collapsed
 				onClick={() => this.props.onSelectChapter(chapter)}
 			/>
 		);
@@ -100,7 +100,9 @@ export default class ReaderOutline extends React.Component<ReaderOutlineProps, R
 		if (this.props.outline.length === 1) {
 			// single folder, render just its contents
 			const folder = this.props.outline[0];
-			return folder.volumes.map(v => this.renderVolume(v, folder.volumes.length === 1));
+			return folder.volumes.map(v =>
+				this.renderVolume(v, folder, folder.volumes.length === 1)
+			);
 		} else {
 			return this.props.outline.map(f => this.renderFolder(f));
 		}

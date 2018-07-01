@@ -29,7 +29,7 @@ export default class MangaNSFW extends React.Component<MangaNSFWProps, any> {
 							Are you sure you want to view <strong>{this.props.manga.name}</strong>?
 						</div>
 						<div className="manga-nsfw-controls">
-							<AppButton onClick={this.props.onContinue} main={true}>
+							<AppButton onClick={this.props.onContinue} main>
 								Continue
 							</AppButton>
 							<Link to="/" className="unstyled-link">

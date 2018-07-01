@@ -1,5 +1,5 @@
 .reader-top-main {
-	transition: color 0.2s ease-in-out;
+	transition: color 0.1s ease-in-out;
 	width: 100%;
 	height: 56px;
 	border-bottom-width: 2px;
@@ -180,6 +180,15 @@
 	width: 120px;
 }
 
+.reader-settings-filter-first-title {
+	margin-bottom: 6px;
+}
+
+.reader-settings-filter-title {
+	margin-top: 10px;
+	margin-bottom: 6px;
+}
+
 .reader-checkbox-main {
 	margin-bottom: 6px;
 }
@@ -231,4 +240,38 @@
 	justify-content: center;
 	margin-top: 6px;
 	font-size: 24px;
+}
+
+.reader-numeric-up-down-main {
+	background-color: var(--main-bg-color);
+	border-color: var(--reader-border-color);
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+}
+
+.reader-numeric-up-down-button {
+	transition: all 0.1s ease;
+	display: inline-block;
+	padding-left: 6px;
+	padding-right: 6px;
+	height: 100%;
+}
+
+.reader-numeric-up-down-button:active {
+	color: var(--accent-color);
+	background-color: var(--reader-border-color);
+}
+
+.reader-numeric-up-down-input {
+	width: 3em;
+	text-align: center;
+	background: transparent;
+	font-weight: bold;
+	border-color: var(--reader-border-color);
+	border-width: 2px;
+	border-right-style: solid;
+	border-left-style: solid;
 }

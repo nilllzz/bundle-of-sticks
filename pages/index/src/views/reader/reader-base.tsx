@@ -33,6 +33,7 @@ type ReaderBaseState = {
 	currentPageIndex: number;
 
 	settings: Settings;
+	settingsVisible: boolean;
 };
 
 export default class ReaderBase extends React.Component<any, ReaderBaseState> {
@@ -64,6 +65,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			currentPageIndex: null,
 
 			settings: settings,
+			settingsVisible: false,
 		};
 
 		this.onClickCloseHandler = this.onClickCloseHandler.bind(this);
@@ -76,6 +78,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.onUpdateSettings = this.onUpdateSettings.bind(this);
 		this.onKeyDownContentHandler = this.onKeyDownContentHandler.bind(this);
 		this.onToggleCollapseTop = this.onToggleCollapseTop.bind(this);
+		this.onToggleSettingsVisibleHandler = this.onToggleSettingsVisibleHandler.bind(this);
+		this.onClickImg = this.onClickImg.bind(this);
 
 		ReaderBase._handle = this;
 	}
@@ -164,7 +168,12 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 
 	private changedPage() {
 		if (this.state.settings.cacheChapter) {
-			ReaderPageCache.cacheChapter(this.state.currentChapter, this.state.currentPageIndex);
+			// ReaderPageCache.cacheChapter(this.state.currentChapter, this.state.currentPageIndex);
+			ReaderPageCache.cacheChapters(
+				this.state.currentVolume.chapters,
+				this.state.currentChapter,
+				this.state.currentPageIndex
+			);
 		}
 		if (!this.state.pageLoadError) {
 			// update reading record
@@ -180,6 +189,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		// scroll to top of page
 		const container = document.getElementById('reader-content');
 		container.scrollTo(0, 0);
+
+		this.applyCSSFilters();
 	}
 
 	private getShareLink() {
@@ -209,6 +220,15 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			'/' +
 			(this.state.currentPageIndex + 1).toString() // do not show the index
 		);
+	}
+
+	private applyCSSFilters() {
+		const imgElement = document.getElementById('reader-base-image');
+		if (imgElement) {
+			const brightness = `brightness(${this.state.settings.brightness}%) `;
+			const sepia = `sepia(${this.state.settings.sepia}%) `;
+			imgElement.style.filter = brightness + sepia;
+		}
 	}
 
 	private advancePage() {
@@ -307,16 +327,16 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			let newChapter = this.state.currentChapter;
 			// go to the previous chapter
 			let newChapterIndex =
-				this.state.currentVolume.chapters.indexOf(this.state.currentChapter) - 1;
+				this.state.currentVolume.chapters.indexOf(this.state.currentChapter) + 1;
 
 			if (newChapterIndex === this.state.currentVolume.chapters.length) {
 				// go to the previous volume
 				newChapterIndex = 0; // last chapter of prev volume
 				const newVolumeIndex =
-					this.state.currentFolder.volumes.indexOf(this.state.currentVolume) - 1;
+					this.state.currentFolder.volumes.indexOf(this.state.currentVolume) + 1;
 				newVolume = this.state.currentFolder.volumes[newVolumeIndex];
 			}
-			newChapter = this.state.currentVolume.chapters[newChapterIndex];
+			newChapter = newVolume.chapters[newChapterIndex];
 
 			this.setState(
 				{
@@ -368,6 +388,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 	private onClickCloseHandler() {
 		this.setState({
 			visible: false,
+			settingsVisible: false,
 		});
 
 		// clear all cached pages
@@ -414,7 +435,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				for (const chapter of volume.chapters) {
 					if (chapter === newChapter) {
 						// before going to a new chapter, clear the cache
-						ReaderPageCache.clearCache(this.state.outline);
+						// ReaderPageCache.clearCache(this.state.outline);
 
 						this.setState(
 							{
@@ -475,10 +496,11 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.setState({
 			settings: newSettings,
 		});
+		this.applyCSSFilters();
 	}
 
 	private onKeyDownContentHandler(e: React.KeyboardEvent<HTMLDivElement>) {
-		if (!this.state.loading) {
+		if (!this.state.loading && !this.state.settingsVisible) {
 			this.keyboardEventBus.push(e.keyCode);
 			switch (e.keyCode) {
 				case Keys.ArrowRight:
@@ -494,10 +516,25 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		}
 	}
 
+	private onToggleSettingsVisibleHandler() {
+		this.setState({
+			settingsVisible: !this.state.settingsVisible,
+		});
+	}
+
 	private onToggleCollapseTop() {
 		this.setState({
 			topCollapsed: !this.state.topCollapsed,
 		});
+	}
+
+	private onClickImg() {
+		this.setState(
+			{
+				settingsVisible: false,
+			},
+			this.advancePage
+		);
 	}
 
 	private renderMain() {
@@ -542,6 +579,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					shareLink={this.getShareLink()}
 					collapsed={this.state.topCollapsed}
 					toggleCollapsed={this.onToggleCollapseTop}
+					settingsVisible={this.state.settingsVisible}
+					toggleSettingsVisible={this.onToggleSettingsVisibleHandler}
 				/>
 				<div className="reader-base-body">
 					<ReaderOutline
@@ -569,7 +608,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 						) : (
 							<img
 								className={'reader-base-image-' + this.state.settings.pageAlignment}
-								onClick={this.advancePage}
+								id="reader-base-image"
+								onClick={this.onClickImg}
 								src={pageSrc}
 							/>
 						)}

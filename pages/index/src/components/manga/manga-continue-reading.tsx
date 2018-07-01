@@ -8,6 +8,7 @@ import MangaCoverimg from '../manga/manga-coverimg';
 import AppButton from '../app/app-button';
 import { Link } from 'react-router-dom';
 import ReaderBase from '../../views/reader/reader-base';
+import AppTimeDisplay from '../app/app-time-display';
 
 type MangaContinueReadingProps = {
 	manga: Manga;
@@ -85,14 +86,14 @@ export default class MangaContinueReading extends React.Component<
 		} else if (!this.state.info) {
 			const manga = new Manga(this.state.record.manga);
 			return (
-				<div className="manga-continue-reading-error">
+				<div className="manga-continue-reading-body manga-continue-reading-error">
 					<div className="text-muted">
 						<strong>{manga.name}</strong>
 					</div>
-					<div className="text-muted">Failed to fetch last read Manga information</div>
+					<div className="text-muted">Failed to fetch Manga information</div>
 					<div className="manga-continue-reading-controls">
 						<Link to={manga.getUrl()} className="unstyled-link">
-							<AppButton>More info</AppButton>
+							<AppButton>View Manga</AppButton>
 						</Link>
 					</div>
 				</div>
@@ -124,6 +125,7 @@ export default class MangaContinueReading extends React.Component<
 										{StringHelper.padStart(volume.number.toString(), '0', 3)}
 									</div>
 								) : null}
+								<AppTimeDisplay time={this.state.record.date} />
 							</div>
 							<div className="manga-continue-reading-controls">
 								<AppButton onClick={this.onClickReadHandler} main>
