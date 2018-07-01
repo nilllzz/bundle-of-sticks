@@ -32,6 +32,10 @@ export default class ReaderPageControl extends React.Component<ReaderPageControl
 	}
 
 	public render() {
+		if (this.props.pageCount === 0) {
+			return null;
+		}
+
 		return (
 			<div className="reader-page-control-main">
 				{this.props.currentPage} / {this.props.pageCount}

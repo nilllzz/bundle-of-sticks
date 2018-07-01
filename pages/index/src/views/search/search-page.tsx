@@ -28,10 +28,10 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 
 		this.providers = Providers.getList();
 
-		const selectedProviders = LocalState.readDefault(
+		const selectedProviders = LocalState.readDefault<string[]>(
 			'selected-providers',
 			this.providers.map(p => p.id)
-		) as string[];
+		);
 
 		this.state = {
 			lastSearchQuery: undefined,

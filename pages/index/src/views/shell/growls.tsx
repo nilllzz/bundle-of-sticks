@@ -13,44 +13,37 @@ export default class Growls extends React.Component<any, GrowlsState> {
 		super(props);
 
 		Growls._handle = this;
-
 		this.state = { growls: [] };
+
+		this.removeGrowl = this.removeGrowl.bind(this);
 	}
 
 	public static add(title: string, body = '', timeOnScreen = 2500) {
 		const container = new GrowlContainer(timeOnScreen);
+		this._handle.addGrowl(container, title, body);
+	}
+
+	private addGrowl(container: GrowlContainer, title: string, body: string) {
 		container.model = (
-			<Growl title={title} body={body} container={container} key={container.id} />
+			<Growl
+				title={title}
+				body={body}
+				container={container}
+				key={container.id}
+				removeThis={this.removeGrowl}
+			/>
 		);
-		this._handle.addGrowl(container);
-	}
 
-	private addGrowl(growl: GrowlContainer) {
 		const growls = this.state.growls;
-		growls.push(growl);
+		growls.push(container);
 
-		this.setState(
-			{
-				growls: growls,
-			},
-			() => {
-				this.tryRemoveGrowl(growl);
-			}
-		);
+		this.setState({
+			growls: growls,
+		});
 	}
 
-	private tryRemoveGrowl(growl: GrowlContainer) {
-		setTimeout(() => {
-			if (growl.isHovering) {
-				this.tryRemoveGrowl(growl);
-			} else {
-				this.removeGrowl(growl);
-			}
-		}, growl.timeOnScreen);
-	}
-
-	private removeGrowl(growl: GrowlContainer) {
-		const growls = this.state.growls.filter(g => g.id !== growl.id);
+	private removeGrowl(container: GrowlContainer) {
+		const growls = this.state.growls.filter(g => g.id !== container.id);
 		this.setState({
 			growls: growls,
 		});

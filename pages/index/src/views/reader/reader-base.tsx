@@ -43,10 +43,10 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 	constructor(props: any) {
 		super(props);
 
-		const settings = LocalState.readDefault(
+		const settings = LocalState.readDefault<Settings>(
 			'reader-settings',
 			ReaderSettings.getDefaultSettings()
-		) as Settings;
+		);
 
 		this.state = {
 			outline: null,
@@ -90,6 +90,12 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 				visible: true,
 				manga: manga,
 				outline: outline,
+				loading: true,
+				// reset current state
+				currentFolder: null,
+				currentVolume: null,
+				currentChapter: null,
+				currentPageIndex: null,
 			},
 			() => {
 				// focus on the reader's main div so key events work

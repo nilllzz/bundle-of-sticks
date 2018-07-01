@@ -1,5 +1,7 @@
 import BaseModel from './base.model';
 import Host from './host.model';
+import Info from './info.model';
+import { Api } from '../api';
 
 export default class Manga extends BaseModel {
 	name: string;
@@ -13,6 +15,19 @@ export default class Manga extends BaseModel {
 
 		if (data.host) {
 			this.host = new Host(data.host);
+		}
+	}
+
+	public static async fetchInfo(providerId: string, mangaLink: string) {
+		const response = await Api.getRequest('/api/manga/info', {
+			host: providerId,
+			manga: mangaLink,
+		});
+		if (!response.success) {
+			return null;
+		} else {
+			const info = new Info(response.data);
+			return info;
 		}
 	}
 

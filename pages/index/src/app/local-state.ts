@@ -3,15 +3,15 @@ export default class LocalState {
 		localStorage.setItem(key, JSON.stringify(value));
 	}
 
-	static read(key: string): any {
-		return JSON.parse(localStorage.getItem(key));
+	static read<T>(key: string): T {
+		return JSON.parse(localStorage.getItem(key)) as T;
 	}
 
-	static readDefault(key: string, defaultValue: any): any {
+	static readDefault<T>(key: string, defaultValue: T): T {
 		if (!this.hasKey(key)) {
 			this.write(key, defaultValue);
 		}
-		return this.read(key);
+		return this.read<T>(key);
 	}
 
 	static hasKey(key: string): boolean {

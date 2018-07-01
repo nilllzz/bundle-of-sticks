@@ -6,7 +6,6 @@ export class GrowlContainer {
 	public readonly timeOnScreen: number;
 	public readonly id: number;
 	public model: any;
-	public isHovering = false;
 
 	constructor(timeOnScreen: number) {
 		this.id = GrowlContainer.idCounter;
@@ -20,9 +19,12 @@ type GrowlProps = {
 	title: string;
 	body: string;
 	container: GrowlContainer;
+	removeThis: (container: GrowlContainer) => void;
 };
 
 export default class Growl extends React.Component<GrowlProps, any> {
+	private _timeoutHandle: number = null;
+
 	constructor(props: GrowlProps) {
 		super(props);
 
@@ -30,12 +32,30 @@ export default class Growl extends React.Component<GrowlProps, any> {
 		this.onMouseLeaveHandler = this.onMouseLeaveHandler.bind(this);
 	}
 
+	componentDidMount() {
+		this.startRemove();
+	}
+
+	private startRemove() {
+		this.clearRemove();
+		this._timeoutHandle = setTimeout(() => {
+			this.props.removeThis(this.props.container);
+		}, this.props.container.timeOnScreen) as any;
+	}
+
+	private clearRemove() {
+		if (this._timeoutHandle) {
+			clearTimeout(this._timeoutHandle);
+			this._timeoutHandle = null;
+		}
+	}
+
 	private onMouseEnterHandler() {
-		this.props.container.isHovering = true;
+		this.clearRemove();
 	}
 
 	private onMouseLeaveHandler() {
-		this.props.container.isHovering = false;
+		this.startRemove();
 	}
 
 	public render() {

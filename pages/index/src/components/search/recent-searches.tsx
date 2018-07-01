@@ -22,7 +22,7 @@ export default class RecentSearches extends React.Component<any, RecentSearchesS
 	}
 
 	private static getSearches(): RecentSearchEntry[] {
-		const searches = LocalState.readDefault('recent-searches', []) as RecentSearchEntry[];
+		const searches = LocalState.readDefault<RecentSearchEntry[]>('recent-searches', []);
 		return searches;
 	}
 

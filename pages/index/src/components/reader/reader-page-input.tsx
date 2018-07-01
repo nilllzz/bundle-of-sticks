@@ -133,7 +133,7 @@ export default class ReaderPageInput extends React.Component<
 	}
 
 	public render() {
-		if (!this.state.visible) {
+		if (!this.state.visible || this.props.pageCount === 0) {
 			return null;
 		}
 

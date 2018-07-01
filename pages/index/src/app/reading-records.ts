@@ -25,7 +25,7 @@ export default class ReadingRecords {
 
 	private static loadBuffer() {
 		if (!this.buffer) {
-			this.buffer = LocalState.readDefault('reading-records', []);
+			this.buffer = LocalState.readDefault<ReadingRecord[]>('reading-records', []);
 		}
 	}
 
@@ -69,6 +69,30 @@ export default class ReadingRecords {
 	public static read(manga: Manga): ReadingRecord {
 		this.loadBuffer();
 		return this.buffer.find(r => new Manga(r.manga).getId() === manga.getId());
+	}
+
+	public static readLatest(maxAmount: number): ReadingRecord[] {
+		this.loadBuffer();
+		if (!this.buffer.length) {
+			return [];
+		}
+		const sorted = this.buffer.sort((a: ReadingRecord, b: ReadingRecord) => {
+			if (a.date < b.date) {
+				return 1;
+			}
+			if (a.date > b.date) {
+				return -1;
+			}
+			return 0;
+		});
+
+		const results = [] as ReadingRecord[];
+		for (let i = 0; i < maxAmount; i++) {
+			if (i < sorted.length) {
+				results.push(sorted[i]);
+			}
+		}
+		return results;
 	}
 
 	public static subscribe(manga: Manga, eventHandler: (record: ReadingRecord) => void) {

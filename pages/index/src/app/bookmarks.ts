@@ -20,7 +20,7 @@ export default class Bookmarks {
 
 	public static getBookmarks(typeFilter = ''): Bookmark[] {
 		if (this.bookmarksBuffer === null) {
-			this.bookmarksBuffer = LocalState.readDefault('bookmarks', []) as Bookmark[];
+			this.bookmarksBuffer = LocalState.readDefault<Bookmark[]>('bookmarks', []);
 		}
 
 		if (!typeFilter) {

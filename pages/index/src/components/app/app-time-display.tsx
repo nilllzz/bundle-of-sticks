@@ -48,30 +48,62 @@ export default class AppTimeDisplay extends React.Component<AppTimeDisplayProps,
 
 			// everything below 1 hour is "x minutes ago"
 			if (seconds < AppTimeDisplay.HOUR) {
-				return Math.floor(seconds / AppTimeDisplay.MINUTE).toString() + ' minutes ago';
+				const ago = Math.floor(seconds / AppTimeDisplay.MINUTE);
+				if (ago === 1) {
+					return ago.toString() + ' minute ago';
+				} else {
+					return ago.toString() + ' minutes ago';
+				}
 			}
 
 			// everything below 1 day is "x hours ago"
 			if (seconds < AppTimeDisplay.DAY) {
-				return Math.floor(seconds / AppTimeDisplay.HOUR).toString() + ' hours ago';
+				const ago = Math.floor(seconds / AppTimeDisplay.HOUR);
+				if (ago === 1) {
+					return ago.toString() + ' hour ago';
+				} else {
+					return ago.toString() + ' hours ago';
+				}
 			}
 
 			// everything below 1 week is "x days ago"
 			if (seconds < AppTimeDisplay.WEEK) {
-				return Math.floor(seconds / AppTimeDisplay.DAY).toString() + ' days ago';
+				const ago = Math.floor(seconds / AppTimeDisplay.DAY);
+				if (ago === 1) {
+					return ago.toString() + ' day ago';
+				} else {
+					return ago.toString() + ' days ago';
+				}
 			}
 
 			// everything below 1 month is "x weeks ago"
 			if (seconds < AppTimeDisplay.MONTH) {
-				return Math.floor(seconds / AppTimeDisplay.WEEK).toString() + ' weeks ago';
+				const ago = Math.floor(seconds / AppTimeDisplay.WEEK);
+				if (ago === 1) {
+					return ago.toString() + ' week ago';
+				} else {
+					return ago.toString() + ' weeks ago';
+				}
 			}
 			// everything below 1 year is "x months ago"
 			if (seconds < AppTimeDisplay.YEAR) {
-				return Math.floor(seconds / AppTimeDisplay.MONTH).toString() + ' months ago';
+				const ago = Math.floor(seconds / AppTimeDisplay.MONTH);
+				if (ago === 1) {
+					return ago.toString() + ' month ago';
+				} else {
+					return ago.toString() + ' months ago';
+				}
 			}
 
 			// everything else is "x years ago"
-			return Math.floor(seconds / AppTimeDisplay.YEAR).toString() + ' years ago';
+			{
+				const ago = Math.floor(seconds / AppTimeDisplay.YEAR);
+				if (ago === 1) {
+					return ago.toString() + ' year ago';
+				} else {
+					return ago.toString() + ' years ago';
+				}
+			}
 		}
 		// future
 		else {

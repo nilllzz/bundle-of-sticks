@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Info from '../../app/models/info.model';
-import { Api } from '../../app/api';
 import MangaRating from '../../components/manga/manga-rating';
 import { Link } from 'react-router-dom';
 import { Glyphicon } from 'react-bootstrap';
@@ -15,11 +14,11 @@ import AppButton from '../../components/app/app-button';
 import ReaderBase from '../reader/reader-base';
 import ReadingRecords, { ReadingRecord } from '../../app/reading-records';
 import StringHelper from '../../app/string-helper';
+import MangaCoverimg from '../../components/manga/manga-coverimg';
 
 type MangaViewPageState = {
 	info: Info;
 	loading: boolean;
-	imgError: boolean;
 	hasBookmark: boolean;
 	nsfwConfirmed: boolean;
 	record: ReadingRecord;
@@ -32,13 +31,11 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		this.state = {
 			info: null,
 			loading: true,
-			imgError: false,
 			hasBookmark: false,
 			nsfwConfirmed: false,
 			record: null,
 		};
 
-		this.onImgLoadError = this.onImgLoadError.bind(this);
 		this.toggleBookmark = this.toggleBookmark.bind(this);
 		this.onContinueNSFW = this.onContinueNSFW.bind(this);
 		this.onUpdateReadingRecord = this.onUpdateReadingRecord.bind(this);
@@ -48,8 +45,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		const provider = this.props.match.params.provider;
 		const link = this.props.match.params.link;
 
-		const response = await Api.getRequest('/api/manga/info', { host: provider, manga: link });
-		const info = new Info(response.data);
+		const info = await Manga.fetchInfo(provider, link);
 
 		const record = ReadingRecords.read(info.manga);
 
@@ -57,7 +53,6 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 			info: info,
 			loading: false,
 			hasBookmark: this.hasBookmark(info.manga),
-			imgError: !info.coverImg,
 			record: record,
 		});
 
@@ -73,12 +68,6 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 	private hasBookmark(manga: Manga) {
 		const bookmark = Bookmarks.createManga(manga);
 		return Bookmarks.hasBookmark(bookmark);
-	}
-
-	private onImgLoadError() {
-		this.setState({
-			imgError: true,
-		});
 	}
 
 	private toggleBookmark() {
@@ -219,6 +208,11 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 							Chapter {StringHelper.padStart(chapter.number.toString(), '0', 3)}
 						</div>
 						{!!chapter.name ? <div>{chapter.name}</div> : null}
+						{volume.number > -1 ? (
+							<div>
+								Volume {StringHelper.padStart(volume.number.toString(), '0', 3)}
+							</div>
+						) : null}
 					</div>
 					<AppButton
 						main
@@ -272,14 +266,12 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 				</div>
 				<div className="manga-view-page-body">
 					<div className="manga-view-page-upper">
-						<div className="manga-view-page-coverimg accent-gradient-background">
-							{!this.state.imgError ? (
-								<img src={this.state.info.coverImg} onError={this.onImgLoadError} />
-							) : (
-								<div className="manga-view-page-coverimg-fail no-user-select">
-									No cover
-								</div>
-							)}
+						<div className="manga-view-page-coverimg">
+							<MangaCoverimg
+								src={this.state.info.coverImg}
+								width={200}
+								height={310}
+							/>
 							<div
 								className={
 									'manga-view-page-bookmark clickable' +

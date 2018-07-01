@@ -4,6 +4,7 @@ import Header from './header';
 import Nav from '../../components/nav/nav';
 import Growls from './growls';
 import ReaderBase from '../reader/reader-base';
+import CookieMessage from '../../components/shell/cookie-message';
 
 export default class Shell extends React.Component<any, any> {
 	public render() {
@@ -23,6 +24,7 @@ export default class Shell extends React.Component<any, any> {
 				</div>
 				<Footer />
 				<ReaderBase />
+				<CookieMessage />
 				<Growls />
 			</div>
 		);

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Info from '../../app/models/info.model';
 import AppLoading from '../../components/app/app-loading';
-import { Api } from '../../app/api';
 import AppButton from '../../components/app/app-button';
 import { Glyphicon } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import ReaderBase from './reader-base';
 import { ReadingRecord } from '../../app/reading-records';
+import Manga from '../../app/models/manga.model';
 
 type ReaderShareState = {
 	info: Info;
@@ -42,18 +42,16 @@ export default class ReaderShare extends React.Component<any, ReaderShareState> 
 	}
 
 	private async loadInfo() {
-		const response = await Api.getRequest('/api/manga/info', {
-			host: this._provider,
-			manga: this._link,
-		});
-		const info = new Info(response.data);
+		const info = await Manga.fetchInfo(this._provider, this._link);
+		const success = !!info;
+
 		this.setState({
 			info: info,
 			loading: false,
-			success: response.success,
+			success: success,
 		});
 
-		if (response.success) {
+		if (success) {
 			// construct reading record for where to start
 			const record = {
 				manga: info.manga,

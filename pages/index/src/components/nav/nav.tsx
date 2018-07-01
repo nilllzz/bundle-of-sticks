@@ -25,7 +25,12 @@ export default class Nav extends React.Component<NavProps, any> {
 						linkTo="/bookmarks"
 						location={this.props.location}
 					/>
-					<NavItem text="History" linkTo="/history" location={this.props.location} />
+					<NavItem
+						text="History"
+						linkTo="/history"
+						location={this.props.location}
+						icon="time"
+					/>
 					<NavSeparator />
 					<NavItem text="Sources" linkTo="/sources" location={this.props.location} />
 				</div>
