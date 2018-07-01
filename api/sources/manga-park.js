@@ -57,9 +57,11 @@ module.exports = class MangaPark {
 		// title
 		const titleElement = contentSection.getElementsByClassName('hd')[0].children[0].children[0];
 		let title = titleElement.textContent;
-		// ends with "Manga", remove
+		// ends with "Manga" or similar, remove
 		if (title.endsWith(' Manga')) {
 			title = title.substring(0, title.indexOf(' Manga'));
+		} else if (title.endsWith(' Manhwa')) {
+			title = title.substring(0, title.indexOf(' Manhwa'));
 		}
 		const link = titleElement.getAttribute('href');
 		const manga = {
