@@ -2,6 +2,8 @@
 
 **Real gud manga viewer**
 
+![](https://i.imgur.com/nAaTFya.png)
+
 Webified to absolute shit with the following completely unnecessary technologies:
 
 -   NodeJS server
