@@ -186,10 +186,6 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			);
 		}
 
-		// scroll to top of page
-		const container = document.getElementById('reader-content');
-		container.scrollTo(0, 0);
-
 		this.applyCSSFilters();
 	}
 
@@ -537,6 +533,12 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		);
 	}
 
+	private onImgLoad() {
+		// scroll to top of page
+		const container = document.getElementById('reader-content');
+		container.scrollTo(0, 0);
+	}
+
 	private renderMain() {
 		if (!this.state.visible) {
 			return <div />;
@@ -610,6 +612,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 								className={'reader-base-image-' + this.state.settings.pageAlignment}
 								id="reader-base-image"
 								onClick={this.onClickImg}
+								onLoad={this.onImgLoad}
 								src={pageSrc}
 							/>
 						)}
