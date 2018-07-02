@@ -10,7 +10,7 @@ Bundle of Sticks pulls together manga information from various websites and funn
 
 It doesn't store any data itself, it only caches responses in RAM for a short amount of time to reduce server load.
 
-Features include:
+### Features include:
 
 -   Combining search results from various Manga providers
 -   Read Manga with a sophisticated viewer that can cache up to 10 pages ahead for slow connections
@@ -20,7 +20,7 @@ Features include:
 -   Privacy mode while active will not automatically store your activity
 -   Memes and Emojis
 
-Webified to absolute shit with the following completely unnecessary technologies:
+### Webified to absolute shit with the following completely unnecessary technologies:
 
 -   NodeJS server
 -   webpack
