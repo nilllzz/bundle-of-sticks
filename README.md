@@ -4,6 +4,22 @@
 
 ![](https://i.imgur.com/nAaTFya.png)
 
+## What it do
+
+Bundle of Sticks pulls together manga information from various websites and funnels them through its backend to the frontend, which displays the resulting data in an overengineered design.
+
+It doesn't store any data itself, it only caches responses in RAM for a short amount of time to reduce server load.
+
+Features include:
+
+-   Combining search results from various Manga providers
+-   Read Manga with a sophisticated viewer that can cache up to 10 pages ahead for slow connections
+-   Manga Outline with chapters and volumes
+-   Continue reading and reading history
+-   Bookmark Mangas to set them aside for later
+-   Privacy mode while active will not automatically store your activity
+-   Memes and Emojis
+
 Webified to absolute shit with the following completely unnecessary technologies:
 
 -   NodeJS server
