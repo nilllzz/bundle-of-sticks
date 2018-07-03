@@ -4,9 +4,9 @@ import LocalState from '../../app/local-state';
 import CoolSearchbar from '../../components/search/cool-searchbar';
 import { ReadingRecord } from '../../app/reading-records';
 import ReadingRecords from '../../app/reading-records';
-import Emojis from '../../app/emojis';
 import MangaContinueReading from '../../components/manga/manga-continue-reading';
 import Manga from '../../app/models/manga.model';
+import HomeBanner from '../../components/home/home-banner';
 
 type HomePageState = {
 	nextQuery: string | null;
@@ -34,24 +34,6 @@ export default class HomePage extends React.Component<any, HomePageState> {
 		};
 
 		this.onUpdateActiveProviders = this.onUpdateActiveProviders.bind(this);
-		this.onClickHomeBanner = this.onClickHomeBanner.bind(this);
-	}
-
-	private getTitle() {
-		let titleText = 'BUNDLE OF STICKS ';
-		let startIndex = 0;
-		while (titleText.includes(' ', startIndex)) {
-			const spaceIndex = titleText.indexOf(' ', startIndex);
-			const emoji = Emojis.getRandom();
-			titleText =
-				titleText.substring(0, spaceIndex) +
-				' ' +
-				emoji +
-				' ' +
-				titleText.substring(spaceIndex + 1);
-			startIndex = spaceIndex + 2 + emoji.length;
-		}
-		return titleText.trim();
 	}
 
 	private onUpdateActiveProviders(activeProviders: string[]) {
@@ -61,17 +43,10 @@ export default class HomePage extends React.Component<any, HomePageState> {
 		});
 	}
 
-	private onClickHomeBanner() {
-		// update emojis, most important feature
-		this.forceUpdate();
-	}
-
 	public render() {
 		return (
 			<div className="home-main">
-				<div className="home-banner" onClick={this.onClickHomeBanner}>
-					<div className="page-main-header no-user-select">{this.getTitle()}</div>
-				</div>
+				<HomeBanner />
 
 				<div className="home-content shell-content-padded">
 					<CoolSearchbar
