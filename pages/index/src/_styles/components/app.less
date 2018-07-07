@@ -82,3 +82,33 @@
 .app-textbox:focus {
 	border-color: var(--accent-color);
 }
+
+.app-tabs-row {
+	display: flex;
+}
+
+.app-tabs-tab {
+	transition: all 0.1s ease;
+	color: var(--default-gray);
+	padding-top: 6px;
+	padding-bottom: 6px;
+	padding-right: 10px;
+	padding-left: 10px;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-top-color: var(--default-white);
+	font-size: 16px;
+}
+
+.app-tabs-tab:hover {
+	color: var(--default-black);
+}
+
+.app-tabs-tab-active {
+	color: var(--default-black);
+	border-top-color: var(--accent-color);
+}
+
+.app-tabs-tab-glyph {
+	margin-right: 6px;
+}

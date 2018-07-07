@@ -26,6 +26,12 @@ export default class Providers {
 				url: 'www.mangapark.me',
 				searchDelay: 0,
 			},
+			{
+				name: 'ExHentai',
+				id: 'exhentai',
+				url: 'exhentai.org/',
+				searchDelay: 0,
+			},
 		];
 	}
 

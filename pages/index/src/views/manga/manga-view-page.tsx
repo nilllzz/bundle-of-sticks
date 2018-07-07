@@ -199,6 +199,35 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		);
 	}
 
+	private renderGenres() {
+		const genreElements = [];
+		if (!this.state.info.genres || this.state.info.genres.length === 0) {
+			genreElements.push(
+				<span className="text-muted" key="0">
+					None
+				</span>
+			);
+		} else {
+			for (let i = 0; i < this.state.info.genres.length; i++) {
+				const genre = this.state.info.genres[i];
+				genreElements.push(<span key={genre}>{genre}</span>);
+				if (i < this.state.info.genres.length - 1) {
+					genreElements.push(<AppSeparator key={genre + 'separator'} />);
+				}
+			}
+		}
+
+		return (
+			<div className="manga-view-page-genres manga-view-page-info-element">
+				<div className="manga-view-page-info-title">
+					{'Genre' + (genreElements.length > 1 ? 's' : '')}:
+				</div>
+
+				<div className="manga-view-page-info-list">{genreElements}</div>
+			</div>
+		);
+	}
+
 	private renderControls() {
 		if (this.state.info.unavailable) {
 			return (
@@ -335,14 +364,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 							<MangaRating rating={this.state.info.rating} />
 							{this.renderAuthors()}
 							{this.renderArtists()}
-							<div className="manga-view-page-genres manga-view-page-info-element">
-								<div className="manga-view-page-info-title">Genres:</div>
-								{this.state.info.genres && this.state.info.genres.length > 0 ? (
-									this.state.info.genres.join(', ')
-								) : (
-									<span className="text-muted">None</span>
-								)}
-							</div>
+							{this.renderGenres()}
 							<div className="manga-view-page-completion-status manga-view-page-info-element">
 								<div className="manga-view-page-info-title">Status:</div>
 								{this.state.info.completionStatus ? (

@@ -5,11 +5,14 @@ import MangaContinueReading from '../../components/manga/manga-continue-reading'
 import Manga from '../../app/models/manga.model';
 import AppButton from '../../components/app/app-button';
 import AppTextbox from '../../components/app/app-textbox';
+import { Keys } from '../../app/keyboard-helper';
+import { Glyphicon } from 'react-bootstrap';
+import AppTabs, { AppTab } from '../../components/app/app-tabs';
 
 type CollectionPageState = {
 	records: ReadingRecord[];
-	hasMoreRecords: boolean;
 	filter: string;
+	activeTab: number;
 };
 
 export default class CollectionPage extends React.Component<any, CollectionPageState> {
@@ -20,28 +23,67 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 		this.state = {
 			filter: '',
 			records: records,
-			hasMoreRecords: ReadingRecords.getLength() > records.length,
+			activeTab: 0,
 		};
 
 		this.onClickLoadMoreRecordsHandler = this.onClickLoadMoreRecordsHandler.bind(this);
 		this.onChangeFilter = this.onChangeFilter.bind(this);
+		this.onChangeTabs = this.onChangeTabs.bind(this);
 	}
 
-	private onClickLoadMoreRecordsHandler() {
-		const records = ReadingRecords.readLatest(this.state.records.length + 4);
+	private loadRecords(amount: number, atoz: boolean) {
+		let records = ReadingRecords.readLatest(amount);
+		if (atoz) {
+			records = records.sort((a: ReadingRecord, b: ReadingRecord) => {
+				if (a.manga.name < b.manga.name) {
+					return -1;
+				}
+				if (a.manga.name > b.manga.name) {
+					return 1;
+				}
+				return 0;
+			});
+		}
 		this.setState({
 			records: records,
-			hasMoreRecords: ReadingRecords.getLength() > records.length,
 		});
 	}
 
+	private onClickLoadMoreRecordsHandler() {
+		this.loadRecords(this.state.records.length + 4, false);
+	}
+
 	private onChangeFilter(text: string) {
+		if (this.state.records.length < ReadingRecords.getLength()) {
+			this.loadRecords(ReadingRecords.getLength(), true);
+		}
 		this.setState({
 			filter: text,
 		});
 	}
 
-	public render() {
+	private onChangeTabs(newTab: number) {
+		this.setState({
+			activeTab: newTab,
+		});
+	}
+
+	private renderBookmarks() {
+		return (
+			<div className="collection-page-tab-bookmarks">
+				<div className="collection-page-filter">
+					<AppTextbox
+						onChange={this.onChangeFilter}
+						text={this.state.filter}
+						id="filter"
+						placeholder="Filter..."
+					/>
+				</div>
+			</div>
+		);
+	}
+
+	private renderReadingRecords() {
 		const filterPhrases = this.state.filter
 			.split(' ')
 			.filter(p => p.trim().length > 0)
@@ -68,13 +110,10 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 			return false;
 		});
 		const hiddenRecordCount = this.state.records.length - records.length;
+		const hasMoreRecords = ReadingRecords.getLength() > this.state.records.length;
 
 		return (
-			<div className="collection-page-main shell-content-padded">
-				<div className="page-main-header">
-					Welcome to your <span className="accent-gradient-text">Collection</span>
-				</div>
-
+			<div className="collection-page-tab-continue-reading">
 				<div className="collection-page-filter">
 					<AppTextbox
 						onChange={this.onChangeFilter}
@@ -95,7 +134,7 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 						{hiddenRecordCount > 0 ? (
 							<div className="text-muted">+ {hiddenRecordCount} hidden</div>
 						) : null}
-						{this.state.hasMoreRecords ? (
+						{hasMoreRecords ? (
 							<div className="collection-page-continue-reading-controls">
 								<span className="collection-page-continue-reading-controls-line" />
 								<AppButton onClick={this.onClickLoadMoreRecordsHandler}>
@@ -106,6 +145,27 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 						) : null}
 					</div>
 				) : null}
+			</div>
+		);
+	}
+
+	public render() {
+		return (
+			<div className="collection-page-main shell-content-padded">
+				<div className="page-main-header">
+					Welcome to your <span className="accent-gradient-text">Collection</span>
+				</div>
+
+				<div className="collection-page-tabs">
+					<AppTabs activeTabIndex={this.state.activeTab} changeTabs={this.onChangeTabs}>
+						<AppTab index={0} title="Bookmarks" glyph="bookmark">
+							{this.renderBookmarks()}
+						</AppTab>
+						<AppTab index={1} title="Reading records" glyph="time">
+							{this.renderReadingRecords()}
+						</AppTab>
+					</AppTabs>
+				</div>
 			</div>
 		);
 	}

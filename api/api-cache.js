@@ -1,5 +1,7 @@
 const Logger = require('./logger');
 
+const ENABLED = true;
+
 class CacheEntry {
 	/**
 	 * @param {Request} request
@@ -59,10 +61,12 @@ class ApiCache {
 	cacheRequest(request, endpoint, data, cacheTimeMs = 600000) {
 		this.prune();
 
-		const entry = new CacheEntry(request, endpoint, data, cacheTimeMs);
-		if (!this.entries.some(e => e.id === entry.id)) {
-			Logger.info('cache', 'Cache results for request ' + entry.id);
-			this.entries.push(entry);
+		if (ENABLED) {
+			const entry = new CacheEntry(request, endpoint, data, cacheTimeMs);
+			if (!this.entries.some(e => e.id === entry.id)) {
+				Logger.info('cache', 'Cache results for request ' + entry.id);
+				this.entries.push(entry);
+			}
 		}
 
 		return data;

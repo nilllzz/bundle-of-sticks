@@ -16,17 +16,34 @@ module.exports = class HttpHelper {
 		Logger.info('api', 'Responsed to request');
 	}
 
-	static async get(host, port, path) {
+	static getCookieJar(cookies) {
+		const cookieJar = [];
+		for (const key of Object.keys(cookies)) {
+			const value = cookies[key];
+			const name = key;
+
+			cookieJar.push(name + '=' + value);
+		}
+		const cookie = cookieJar.join('; ').trim();
+		return cookie;
+	}
+
+	static async get(host, port, path, cookies = {}) {
 		const http = port == 443 ? require('https') : require('http');
 
 		if (host.startsWith('http://')) {
 			host = host.substring(7);
 		}
 
+		const cookie = this.getCookieJar(cookies);
+
 		const options = {
 			host: host,
 			port: port,
 			path: path,
+			headers: {
+				Cookie: cookie,
+			},
 		};
 
 		const result = await new Promise(function(resolve, reject) {
@@ -88,6 +105,58 @@ module.exports = class HttpHelper {
 		if (src.toLowerCase().endsWith('.jpeg') || src.toLowerCase().endsWith('.jpg')) {
 			extension = 'jpeg';
 		} else if (src.toLowerCase().endsWith('.png')) {
+			extension = 'png';
+		}
+		const base64 = 'data:image/' + extension + ';base64, ' + result.body;
+		return base64;
+	}
+
+	static async getImageBase64Options(host, port, path, cookies = {}) {
+		const http = port == 443 ? require('https') : require('http');
+
+		if (host.startsWith('http://')) {
+			host = host.substring(7);
+		}
+
+		const cookie = this.getCookieJar(cookies);
+
+		const options = {
+			host: host,
+			port: port,
+			path: path,
+			headers: {
+				Cookie: cookie,
+			},
+		};
+
+		const result = await new Promise(function(resolve, reject) {
+			http.get(options, res => {
+				res.on('error', () => {
+					reject({
+						status: res.statusCode,
+					});
+				});
+
+				let chunks = [];
+				res.on('data', chunk => {
+					chunks.push(chunk);
+				});
+				res.on('end', () => {
+					const buffer = Buffer.concat(chunks);
+					const base64 = buffer.toString('base64');
+					resolve({
+						status: res.statusCode,
+						body: base64,
+					});
+				});
+			});
+		});
+
+		// add base 64 extension
+		let extension = 'tiff';
+		if (path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.jpg')) {
+			extension = 'jpeg';
+		} else if (path.toLowerCase().endsWith('.png')) {
 			extension = 'png';
 		}
 		const base64 = 'data:image/' + extension + ';base64, ' + result.body;

@@ -1,5 +1,6 @@
 const MangaHere = require('./manga-here');
 const MangaPark = require('./manga-park');
+const Exhentai = require('./exhentai');
 
 module.exports = class SourceHelper {
 	static async search(query, providers) {
@@ -10,6 +11,9 @@ module.exports = class SourceHelper {
 		}
 		if (searchAll || providers.includes(MangaPark.id)) {
 			results = results.concat(await MangaPark.search(query));
+		}
+		if (searchAll || providers.includes(Exhentai.id)) {
+			results = results.concat(await Exhentai.search(query));
 		}
 
 		// sort all results alphabetically
@@ -46,6 +50,8 @@ module.exports = class SourceHelper {
 				return await MangaHere.getInfo(mangaLink);
 			case MangaPark.id:
 				return await MangaPark.getInfo(mangaLink);
+			case Exhentai.id:
+				return await Exhentai.getInfo(mangaLink);
 		}
 	}
 
@@ -55,6 +61,8 @@ module.exports = class SourceHelper {
 				return await MangaHere.getPages(chapterLink);
 			case MangaPark.id:
 				return await MangaPark.getPages(chapterLink);
+			case Exhentai.id:
+				return await Exhentai.getPages(chapterLink);
 		}
 	}
 
@@ -70,6 +78,8 @@ module.exports = class SourceHelper {
 				return await MangaHere.getPageSrc(pageLink, base64);
 			case MangaPark.id:
 				return await MangaPark.getPageSrc(pageLink, base64);
+			case Exhentai.id:
+				return await Exhentai.getPageSrc(pageLink, base64);
 		}
 	}
 };
