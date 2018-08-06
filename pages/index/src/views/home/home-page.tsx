@@ -21,7 +21,7 @@ export default class HomePage extends React.Component<any, HomePageState> {
 		super(props);
 
 		this.providers = Providers.getList();
-		this.records = ReadingRecords.readLatest(3);
+		this.records = ReadingRecords.readLatest(4);
 
 		const selectedProviders = LocalState.readDefault<string[]>(
 			'selected-providers',

@@ -5,8 +5,6 @@ import MangaContinueReading from '../../components/manga/manga-continue-reading'
 import Manga from '../../app/models/manga.model';
 import AppButton from '../../components/app/app-button';
 import AppTextbox from '../../components/app/app-textbox';
-import { Keys } from '../../app/keyboard-helper';
-import { Glyphicon } from 'react-bootstrap';
 import AppTabs, { AppTab } from '../../components/app/app-tabs';
 
 type CollectionPageState = {

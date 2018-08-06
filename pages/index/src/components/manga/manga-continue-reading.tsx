@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Manga from '../../app/models/manga.model';
 import Info from '../../app/models/info.model';
-import AppLoading from '../app/app-loading';
 import ReadingRecords, { ReadingRecord } from '../../app/reading-records';
 import StringHelper from '../../app/string-helper';
 import MangaCoverimg from '../manga/manga-coverimg';
@@ -9,6 +8,7 @@ import AppButton from '../app/app-button';
 import { Link } from 'react-router-dom';
 import ReaderBase from '../../views/reader/reader-base';
 import AppTimeDisplay from '../app/app-time-display';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 type MangaContinueReadingProps = {
 	manga: Manga;
@@ -104,6 +104,7 @@ export default class MangaContinueReading extends React.Component<
 			);
 			const volume = folder.volumes.find(v => v.number === this.state.record.volume);
 			const chapter = volume.chapters.find(c => c.number === this.state.record.chapter);
+
 			return (
 				<div className="manga-continue-reading-body">
 					<span className="manga-continue-reading-name accent-color-text">

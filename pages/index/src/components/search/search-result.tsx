@@ -14,13 +14,13 @@ export default class SearchResult extends React.Component<SearchResultProps, any
 	constructor(props: SearchResultProps) {
 		super(props);
 
-		this.onClickMainHandler = this.onClickMainHandler.bind(this);
 		this.onClickBookmarkHandler = this.onClickBookmarkHandler.bind(this);
 	}
 
 	private onClickBookmarkHandler(e: React.MouseEvent<Glyphicon>) {
 		// do not trigger main's click event
 		e.stopPropagation();
+		e.preventDefault();
 
 		const bookmark = Bookmarks.createManga(this.props.manga);
 		if (!Bookmarks.hasBookmark(bookmark)) {
@@ -41,13 +41,6 @@ export default class SearchResult extends React.Component<SearchResultProps, any
 		this.forceUpdate();
 	}
 
-	private onClickMainHandler() {
-		const element = document.getElementById(
-			'manga-link-' + this.props.manga.host.id + '-' + this.props.manga.name
-		);
-		element.click();
-	}
-
 	public render() {
 		const bookmark = Bookmarks.createManga(this.props.manga);
 		const hasBookmark = Bookmarks.hasBookmark(bookmark);
@@ -58,7 +51,10 @@ export default class SearchResult extends React.Component<SearchResultProps, any
 		);
 
 		return (
-			<div className="search-result-main clickable" onClick={this.onClickMainHandler}>
+			<Link
+				className="search-result-main clickable unstyled-link"
+				to={this.props.manga.getUrl()}
+			>
 				<div className="search-result-info enable-user-select">
 					<div className="search-result-title accent-color-text">
 						{this.props.manga.hot ? (
@@ -93,12 +89,7 @@ export default class SearchResult extends React.Component<SearchResultProps, any
 						/>
 					</OverlayTrigger>
 				</div>
-				<Link
-					to={this.props.manga.getUrl()}
-					hidden
-					id={'manga-link-' + this.props.manga.host.id + '-' + this.props.manga.name}
-				/>
-			</div>
+			</Link>
 		);
 	}
 }
