@@ -8,7 +8,6 @@ import AppButton from '../app/app-button';
 import { Link } from 'react-router-dom';
 import ReaderBase from '../../views/reader/reader-base';
 import AppTimeDisplay from '../app/app-time-display';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 type MangaContinueReadingProps = {
 	manga: Manga;
@@ -35,10 +34,7 @@ export default class MangaContinueReading extends React.Component<
 	}
 
 	async componentDidMount() {
-		const info = await Manga.fetchInfo(
-			this.state.record.manga.host.id,
-			this.state.record.manga.link
-		);
+		const info = await Manga.fetchInfo(this.props.manga.host.id, this.props.manga.link);
 
 		this.setState(
 			{
@@ -84,62 +80,107 @@ export default class MangaContinueReading extends React.Component<
 				</div>
 			);
 		} else if (!this.state.info) {
-			const manga = new Manga(this.state.record.manga);
 			return (
 				<div className="manga-continue-reading-body manga-continue-reading-error">
 					<div className="text-muted">
-						<strong>{manga.name}</strong>
+						<strong>{this.props.manga.name}</strong>
 					</div>
 					<div className="text-muted">Failed to fetch Manga information</div>
 					<div className="manga-continue-reading-controls">
-						<Link to={manga.getUrl()} className="unstyled-link">
+						<Link to={this.props.manga.getUrl()} className="unstyled-link">
 							<AppButton>View Manga</AppButton>
 						</Link>
 					</div>
 				</div>
 			);
 		} else {
-			const folder = this.state.info.folders.find(
-				f => f.getId() === this.state.record.folderId
-			);
-			const volume = folder.volumes.find(v => v.number === this.state.record.volume);
-			const chapter = volume.chapters.find(c => c.number === this.state.record.chapter);
+			if (!this.state.record) {
+				// if no record exists, show Start reading
 
-			return (
-				<div className="manga-continue-reading-body">
-					<span className="manga-continue-reading-name accent-color-text">
-						<strong>{this.state.info.manga.name}</strong>
-					</span>
-					<div className="manga-continue-reading-info">
-						<MangaCoverimg src={this.state.info.coverImg} width={100} height={155} />
-						<div className="manga-continue-reading-right">
-							<div className="manga-continue-reading-text text-muted">
-								<div>Page {(this.state.record.page + 1).toString()}</div>
-								<div>
-									Chapter{' '}
-									{StringHelper.padStart(chapter.number.toString(), '0', 3)}
+				return (
+					<div className="manga-continue-reading-body">
+						<span className="manga-continue-reading-title accent-color-text">
+							<strong>{this.state.info.manga.name}</strong>
+						</span>
+						<div className="manga-continue-reading-info">
+							<MangaCoverimg
+								src={this.state.info.coverImg}
+								width={100}
+								height={155}
+							/>
+							<div className="manga-continue-reading-right">
+								<div className="manga-continue-reading-text text-muted">
+									You have not read<br />this Manga
 								</div>
-								{!!chapter.name ? <div>{chapter.name}</div> : null}
-								{volume.number > -1 ? (
-									<div>
-										Volume{' '}
-										{StringHelper.padStart(volume.number.toString(), '0', 3)}
-									</div>
-								) : null}
-								<AppTimeDisplay time={this.state.record.date} />
-							</div>
-							<div className="manga-continue-reading-controls">
-								<AppButton onClick={this.onClickReadHandler} main>
-									Read
-								</AppButton>
-								<Link to={this.state.info.manga.getUrl()} className="unstyled-link">
-									<AppButton>More info</AppButton>
-								</Link>
+								<div className="manga-continue-reading-controls">
+									<AppButton onClick={this.onClickReadHandler} main>
+										Read
+									</AppButton>
+									<Link
+										to={this.state.info.manga.getUrl()}
+										className="unstyled-link"
+									>
+										<AppButton>More info</AppButton>
+									</Link>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			);
+				);
+			} else {
+				const folder = this.state.info.folders.find(
+					f => f.getId() === this.state.record.folderId
+				);
+				const volume = folder.volumes.find(v => v.number === this.state.record.volume);
+				const chapter = volume.chapters.find(c => c.number === this.state.record.chapter);
+
+				return (
+					<div className="manga-continue-reading-body">
+						<span className="manga-continue-reading-title accent-color-text">
+							<strong>{this.state.info.manga.name}</strong>
+						</span>
+						<div className="manga-continue-reading-info">
+							<MangaCoverimg
+								src={this.state.info.coverImg}
+								width={100}
+								height={155}
+							/>
+							<div className="manga-continue-reading-right">
+								<div className="manga-continue-reading-text text-muted">
+									<div>Page {(this.state.record.page + 1).toString()}</div>
+									<div>
+										Chapter{' '}
+										{StringHelper.padStart(chapter.number.toString(), '0', 3)}
+									</div>
+									{!!chapter.name ? <div>{chapter.name}</div> : null}
+									{volume.number > -1 ? (
+										<div>
+											Volume{' '}
+											{StringHelper.padStart(
+												volume.number.toString(),
+												'0',
+												3
+											)}
+										</div>
+									) : null}
+									<AppTimeDisplay time={this.state.record.date} />
+								</div>
+								<div className="manga-continue-reading-controls">
+									<AppButton onClick={this.onClickReadHandler} main>
+										Read
+									</AppButton>
+									<Link
+										to={this.state.info.manga.getUrl()}
+										className="unstyled-link"
+									>
+										<AppButton>More info</AppButton>
+									</Link>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+			}
 		}
 	}
 

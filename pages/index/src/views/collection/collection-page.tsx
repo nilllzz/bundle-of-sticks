@@ -17,7 +17,7 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 	constructor(props: any) {
 		super(props);
 
-		const records = ReadingRecords.readLatest(4);
+		const records = ReadingRecords.readLatest(10);
 		this.state = {
 			filter: '',
 			records: records,
@@ -48,7 +48,7 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 	}
 
 	private onClickLoadMoreRecordsHandler() {
-		this.loadRecords(this.state.records.length + 4, false);
+		this.loadRecords(this.state.records.length + 10, false);
 	}
 
 	private onChangeFilter(text: string) {

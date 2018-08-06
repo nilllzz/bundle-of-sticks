@@ -9,6 +9,8 @@ import { Provider } from '../../app/providers';
 import Providers from '../../app/providers';
 import LocalState from '../../app/local-state';
 import AppLoading from '../../components/app/app-loading';
+import MangaContinueReading from '../../components/manga/manga-continue-reading';
+import { Glyphicon } from 'react-bootstrap';
 
 type SearchPageState = {
 	nextQuery: string | null;
@@ -18,6 +20,7 @@ type SearchPageState = {
 	loading: boolean;
 	activeProviders: string[];
 	showProvidersInResults: boolean;
+	showPreviews: boolean;
 };
 
 export default class SearchPage extends React.Component<any, SearchPageState> {
@@ -41,9 +44,11 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			nextQuery: null,
 			lastSearchTime: null,
 			showProvidersInResults: true,
+			showPreviews: LocalState.readDefault<boolean>('search-show-previews', false),
 		};
 
 		this.onUpdateActiveProviders = this.onUpdateActiveProviders.bind(this);
+		this.changeView = this.changeView.bind(this);
 	}
 
 	async componentDidMount() {
@@ -113,6 +118,13 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 		);
 	}
 
+	private changeView(showPreviews: boolean) {
+		LocalState.write('search-show-previews', showPreviews);
+		this.setState({
+			showPreviews: LocalState.readDefault<boolean>('search-show-previews', false),
+		});
+	}
+
 	private renderSearchResults() {
 		if (this.state.loading) {
 			return <AppLoading />;
@@ -120,13 +132,46 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 			if (!this.state.results || this.state.results.length === 0) {
 				return <div>No results.</div>;
 			} else {
-				return this.state.results.map(r => (
-					<SearchResult
-						key={r.link}
-						manga={r}
-						showProvider={this.state.showProvidersInResults}
-					/>
-				));
+				return (
+					<div className="search-page-results-container">
+						<div className="search-page-results-controls">
+							<div className="search-page-results-controls-view">
+								<Glyphicon
+									glyph="th-list"
+									className={
+										'clickable' +
+										(!this.state.showPreviews ? '' : ' text-muted')
+									}
+									onClick={() => this.changeView(false)}
+								/>
+								<Glyphicon
+									glyph="th-large"
+									className={
+										'clickable' + (this.state.showPreviews ? '' : ' text-muted')
+									}
+									onClick={() => this.changeView(true)}
+								/>
+							</div>
+						</div>
+						{this.state.showPreviews ? (
+							<div className="search-page-results-container-previews">
+								{this.state.results.map(r => (
+									<MangaContinueReading key={r.link} manga={r} />
+								))}
+							</div>
+						) : (
+							<div className="search-page-results-container-list">
+								{this.state.results.map(r => (
+									<SearchResult
+										key={r.link}
+										manga={r}
+										showProvider={this.state.showProvidersInResults}
+									/>
+								))}
+							</div>
+						)}
+					</div>
+				);
 			}
 		}
 	}
