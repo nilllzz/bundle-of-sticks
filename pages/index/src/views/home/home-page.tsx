@@ -61,7 +61,13 @@ export default class HomePage extends React.Component<any, HomePageState> {
 						<div className="home-continue-reading-entries">
 							{this.records.map(r => {
 								const manga = new Manga(r.manga); // no actual instance returned, need to populate
-								return <MangaContinueReading key={manga.getId()} manga={manga} />;
+								return (
+									<MangaContinueReading
+										key={manga.getId()}
+										manga={manga}
+										showRemove={false}
+									/>
+								);
 							})}
 						</div>
 					</div>

@@ -156,7 +156,11 @@ export default class SearchPage extends React.Component<any, SearchPageState> {
 						{this.state.showPreviews ? (
 							<div className="search-page-results-container-previews">
 								{this.state.results.map(r => (
-									<MangaContinueReading key={r.link} manga={r} />
+									<MangaContinueReading
+										key={r.link}
+										manga={r}
+										showRemove={false}
+									/>
 								))}
 							</div>
 						) : (

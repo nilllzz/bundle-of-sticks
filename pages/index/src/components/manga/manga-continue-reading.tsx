@@ -8,9 +8,12 @@ import AppButton from '../app/app-button';
 import { Link } from 'react-router-dom';
 import ReaderBase from '../../views/reader/reader-base';
 import AppTimeDisplay from '../app/app-time-display';
+import { Glyphicon } from 'react-bootstrap';
 
 type MangaContinueReadingProps = {
 	manga: Manga;
+	showRemove: boolean;
+	onRemoveRecord?: (manga: Manga) => void;
 };
 
 type MangaContinueReadingState = {
@@ -31,6 +34,7 @@ export default class MangaContinueReading extends React.Component<
 
 		this.onRecordUpdate = this.onRecordUpdate.bind(this);
 		this.onClickReadHandler = this.onClickReadHandler.bind(this);
+		this.onClickRemoveRecord = this.onClickRemoveRecord.bind(this);
 	}
 
 	async componentDidMount() {
@@ -63,6 +67,13 @@ export default class MangaContinueReading extends React.Component<
 
 	private onClickReadHandler() {
 		ReaderBase.show(this.state.info.manga, this.state.info.folders, this.state.record);
+	}
+
+	private onClickRemoveRecord() {
+		ReadingRecords.remove(this.state.info.manga);
+		if (this.props.onRemoveRecord) {
+			this.props.onRemoveRecord(this.props.manga);
+		}
 	}
 
 	private renderMain() {
@@ -110,7 +121,9 @@ export default class MangaContinueReading extends React.Component<
 							/>
 							<div className="manga-continue-reading-right">
 								<div className="manga-continue-reading-text text-muted">
-									You have not read<br />this Manga
+									You have not read
+									<br />
+									this Manga
 								</div>
 								<div className="manga-continue-reading-controls">
 									<AppButton onClick={this.onClickReadHandler} main>
@@ -145,6 +158,14 @@ export default class MangaContinueReading extends React.Component<
 								width={100}
 								height={155}
 							/>
+							{this.props.showRemove ? (
+								<div
+									className="manga-continue-reading-remove clickable"
+									onClick={this.onClickRemoveRecord}
+								>
+									<Glyphicon glyph="remove" />
+								</div>
+							) : null}
 							<div className="manga-continue-reading-right">
 								<div className="manga-continue-reading-text text-muted">
 									<div>Page {(this.state.record.page + 1).toString()}</div>

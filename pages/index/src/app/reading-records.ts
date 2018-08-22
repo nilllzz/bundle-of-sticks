@@ -66,6 +66,15 @@ export default class ReadingRecords {
 		}
 	}
 
+	public static remove(manga: Manga) {
+		// remove current record if one exists
+		const currentRecord = this.read(manga);
+		if (currentRecord) {
+			this.buffer = this.buffer.filter(r => new Manga(r.manga).getId() !== manga.getId());
+			this.writeBuffer();
+		}
+	}
+
 	public static read(manga: Manga): ReadingRecord {
 		this.loadBuffer();
 		return this.buffer.find(r => new Manga(r.manga).getId() === manga.getId());

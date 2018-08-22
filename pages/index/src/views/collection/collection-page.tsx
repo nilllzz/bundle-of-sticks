@@ -6,6 +6,7 @@ import Manga from '../../app/models/manga.model';
 import AppButton from '../../components/app/app-button';
 import AppTextbox from '../../components/app/app-textbox';
 import AppTabs, { AppTab } from '../../components/app/app-tabs';
+import { Link, Switch } from 'react-router-dom';
 
 type CollectionPageState = {
 	records: ReadingRecord[];
@@ -27,6 +28,14 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 		this.onClickLoadMoreRecordsHandler = this.onClickLoadMoreRecordsHandler.bind(this);
 		this.onChangeFilter = this.onChangeFilter.bind(this);
 		this.onChangeTabs = this.onChangeTabs.bind(this);
+		this.onRemoveReadingRecord = this.onRemoveReadingRecord.bind(this);
+	}
+
+	componentDidMount() {
+		const tabIndex = this.getActiveTabForHash();
+		this.setState({
+			activeTab: tabIndex,
+		});
 	}
 
 	private loadRecords(amount: number, atoz: boolean) {
@@ -47,6 +56,27 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 		});
 	}
 
+	private getActiveTabForHash() {
+		const hash = this.props.location.hash;
+		switch (hash) {
+			case '#bookmarks':
+				return 0;
+			case '#records':
+				return 1;
+		}
+		// anything else goes to bookmarks
+		return 0;
+	}
+
+	private getHashForActiveTab() {
+		switch (this.state.activeTab) {
+			case 0:
+				return 'bookmarks';
+			case 1:
+				return 'records';
+		}
+	}
+
 	private onClickLoadMoreRecordsHandler() {
 		this.loadRecords(this.state.records.length + 10, false);
 	}
@@ -61,8 +91,23 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 	}
 
 	private onChangeTabs(newTab: number) {
+		this.setState(
+			{
+				activeTab: newTab,
+			},
+			() => {
+				const element = document.getElementById('link-collection-records');
+				element.click();
+			}
+		);
+	}
+
+	private onRemoveReadingRecord(manga: Manga) {
+		const records = this.state.records.filter(
+			r => new Manga(r.manga).getId() !== manga.getId()
+		);
 		this.setState({
-			activeTab: newTab,
+			records: records,
 		});
 	}
 
@@ -126,7 +171,14 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 						<div className="collection-page-continue-reading-list">
 							{records.map(r => {
 								const manga = new Manga(r.manga);
-								return <MangaContinueReading key={manga.getId()} manga={manga} />;
+								return (
+									<MangaContinueReading
+										key={manga.getId()}
+										manga={manga}
+										showRemove={true}
+										onRemoveRecord={this.onRemoveReadingRecord}
+									/>
+								);
 							})}
 						</div>
 						{hiddenRecordCount > 0 ? (
@@ -164,6 +216,12 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 						</AppTab>
 					</AppTabs>
 				</div>
+
+				<Link
+					to={'/collection#' + this.getHashForActiveTab()}
+					hidden
+					id="link-collection-records"
+				/>
 			</div>
 		);
 	}

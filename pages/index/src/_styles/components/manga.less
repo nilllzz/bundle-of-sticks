@@ -78,6 +78,7 @@
 
 .manga-continue-reading-info {
 	display: flex;
+	position: relative;
 }
 
 .manga-continue-reading-right {
@@ -126,4 +127,33 @@
 	margin-top: 12px;
 	width: 156px;
 	height: 35px;
+}
+
+.manga-continue-reading-info:hover .manga-continue-reading-remove {
+	opacity: 0.75;
+}
+
+.manga-continue-reading-remove {
+	transition: opacity 0.1s ease-in-out;
+	transition: background-color 0.1s ease-in-out;
+	position: absolute;
+	top: 4px;
+	left: 0px;
+	opacity: 0.5;
+	padding: 4px;
+	padding-bottom: 6px;
+	background-color: var(--accent-color);
+	color: var(--default-white);
+	border-top-left-radius: 3px;
+	border-color: var(--accent-color);
+	border-style: solid;
+	border-width: 1px;
+}
+
+.manga-continue-reading-remove:hover {
+	opacity: 1 !important; // override 0.75
+}
+
+.manga-continue-reading-remove:active {
+	background-color: var(--secondary-color);
 }
