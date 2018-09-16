@@ -59,6 +59,19 @@ export default class MangaContinueReading extends React.Component<
 		}
 	}
 
+	private getChapterAmount() {
+		if (this.state.info && this.state.info.folders) {
+			let chapters = 0;
+			for (const folder of this.state.info.folders) {
+				for (const volume of folder.volumes) {
+					chapters += volume.chapters.length;
+				}
+			}
+			return chapters;
+		}
+		return 0;
+	}
+
 	private onRecordUpdate(record: ReadingRecord) {
 		this.setState({
 			record: record,
@@ -132,9 +145,9 @@ export default class MangaContinueReading extends React.Component<
 							<div className="manga-continue-reading-right">
 								{!this.state.info.unavailable ?
 									<div className="manga-continue-reading-text text-muted">
-										You have not read
-										<br />
-										this Manga
+										You have not read<br />
+										this Manga<br />
+										<strong>{this.getChapterAmount()} Chapters</strong>
 									</div> :
 									<div className="manga-continue-reading-text accent-color-text">
 										<Glyphicon glyph="lock" /> <strong>{this.state.info.manga.host.getProvider().name}</strong> marked<br />
