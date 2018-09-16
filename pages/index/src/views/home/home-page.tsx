@@ -43,6 +43,31 @@ export default class HomePage extends React.Component<any, HomePageState> {
 		});
 	}
 
+	private renderContinueReading() {
+		if (this.records.length > 0) {
+			return (
+				<div>
+					<div className="home-continue-reading-title">Continue reading</div>
+					<div className="home-continue-reading-entries">
+						{this.records.map(r => {
+							const manga = new Manga(r.manga); // no actual instance returned, need to populate
+							return (
+								<MangaContinueReading
+									key={manga.getId()}
+									manga={manga}
+									showRemove={false}
+								/>
+							);
+						})}
+					</div>
+				</div>
+			);
+		}
+		else {
+			return null;
+		}
+	}
+
 	public render() {
 		return (
 			<div className="home-main">
@@ -56,21 +81,7 @@ export default class HomePage extends React.Component<any, HomePageState> {
 						activeProviders={this.state.activeProviders}
 						providers={this.providers}
 					/>
-					<div>
-						<div className="home-continue-reading-title">Continue reading</div>
-						<div className="home-continue-reading-entries">
-							{this.records.map(r => {
-								const manga = new Manga(r.manga); // no actual instance returned, need to populate
-								return (
-									<MangaContinueReading
-										key={manga.getId()}
-										manga={manga}
-										showRemove={false}
-									/>
-								);
-							})}
-						</div>
-					</div>
+					{this.renderContinueReading()}
 				</div>
 			</div>
 		);

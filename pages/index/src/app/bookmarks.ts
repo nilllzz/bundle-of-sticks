@@ -5,6 +5,7 @@ export type Bookmark = {
 	name: string;
 	type: string;
 	target: string;
+	manga?: Manga,
 	dateAdded: number;
 };
 
@@ -58,6 +59,7 @@ export default class Bookmarks {
 			name: manga.name,
 			type: this.TYPE_MANGA,
 			target: manga.getUrl(),
+			manga: manga,
 			dateAdded: Date.now(),
 		};
 	}

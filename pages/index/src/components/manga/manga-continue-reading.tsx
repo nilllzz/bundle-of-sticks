@@ -13,7 +13,7 @@ import { Glyphicon } from 'react-bootstrap';
 type MangaContinueReadingProps = {
 	manga: Manga;
 	showRemove: boolean;
-	onRemoveRecord?: (manga: Manga) => void;
+	onRemoveRecord?: (manga: Manga) => boolean;
 };
 
 type MangaContinueReadingState = {
@@ -25,7 +25,7 @@ type MangaContinueReadingState = {
 export default class MangaContinueReading extends React.Component<
 	MangaContinueReadingProps,
 	MangaContinueReadingState
-> {
+	> {
 	constructor(props: MangaContinueReadingProps) {
 		super(props);
 
@@ -70,9 +70,11 @@ export default class MangaContinueReading extends React.Component<
 	}
 
 	private onClickRemoveRecord() {
-		ReadingRecords.remove(this.state.info.manga);
 		if (this.props.onRemoveRecord) {
-			this.props.onRemoveRecord(this.props.manga);
+			const doRemove = this.props.onRemoveRecord(this.props.manga);
+			if (doRemove) {
+				ReadingRecords.remove(this.state.info.manga);
+			}
 		}
 	}
 
@@ -105,7 +107,7 @@ export default class MangaContinueReading extends React.Component<
 				</div>
 			);
 		} else {
-			if (!this.state.record) {
+			if (!this.state.record || this.state.info.unavailable) {
 				// if no record exists, show Start reading
 
 				return (
@@ -119,16 +121,31 @@ export default class MangaContinueReading extends React.Component<
 								width={100}
 								height={155}
 							/>
-							<div className="manga-continue-reading-right">
-								<div className="manga-continue-reading-text text-muted">
-									You have not read
-									<br />
-									this Manga
+							{this.props.showRemove ? (
+								<div
+									className="manga-continue-reading-remove clickable"
+									onClick={this.onClickRemoveRecord}
+								>
+									<Glyphicon glyph="remove" />
 								</div>
+							) : null}
+							<div className="manga-continue-reading-right">
+								{!this.state.info.unavailable ?
+									<div className="manga-continue-reading-text text-muted">
+										You have not read
+										<br />
+										this Manga
+									</div> :
+									<div className="manga-continue-reading-text accent-color-text">
+										<Glyphicon glyph="lock" /> <strong>{this.state.info.manga.host.getProvider().name}</strong> marked<br />
+										this Manga as unavailable
+									</div>}
 								<div className="manga-continue-reading-controls">
-									<AppButton onClick={this.onClickReadHandler} main>
-										Read
-									</AppButton>
+									{!this.state.info.unavailable ?
+										<AppButton onClick={this.onClickReadHandler} main>
+											Read
+										</AppButton>
+										: null}
 									<Link
 										to={this.state.info.manga.getUrl()}
 										className="unstyled-link"
