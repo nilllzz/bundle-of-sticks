@@ -80,6 +80,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		this.onToggleCollapseTop = this.onToggleCollapseTop.bind(this);
 		this.onToggleSettingsVisibleHandler = this.onToggleSettingsVisibleHandler.bind(this);
 		this.onClickImg = this.onClickImg.bind(this);
+		this.onClickBackground = this.onClickBackground.bind(this);
 
 		ReaderBase._handle = this;
 	}
@@ -311,9 +312,9 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		if (
 			this.state.currentPageIndex === 0 &&
 			this.state.currentVolume.chapters.indexOf(this.state.currentChapter) ===
-				this.state.currentVolume.chapters.length - 1 &&
+			this.state.currentVolume.chapters.length - 1 &&
 			this.state.currentFolder.volumes.indexOf(this.state.currentVolume) ===
-				this.state.currentFolder.volumes.length - 1
+			this.state.currentFolder.volumes.length - 1
 		) {
 			return;
 		}
@@ -533,16 +534,39 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		);
 	}
 
+	private onClickBackground(e: React.MouseEvent<HTMLDivElement>) {
+		if (!this.state.loading && !this.state.pageLoadError) {
+			// advance when clicked right of image
+			if (e.clientX >= e.currentTarget.clientWidth / 2) {
+				this.onClickImg();
+			}
+			else {
+				this.setState(
+					{
+						settingsVisible: false,
+					},
+					this.previousPage
+				);
+			}
+		}
+	}
+
 	private onImgLoad() {
 		// scroll to top of page
 		const container = document.getElementById('reader-content');
 		container.scrollTo(0, 0);
 	}
 
-	private renderMain() {
-		if (!this.state.visible) {
-			return <div />;
-		}
+	private getPageCount() {
+		return this.state.currentChapter && this.state.currentChapter.pages
+			? this.state.currentChapter.pages.length
+			: 0;
+	}
+
+	private renderContent() {
+		const contentClass =
+			'reader-base-content reader-base-content-top-' +
+			(this.state.topCollapsed ? 'collapsed' : 'visible');
 
 		let pageSrc = null;
 		if (!this.state.loading) {
@@ -554,14 +578,43 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 			}
 		}
 
-		const pageCount =
-			this.state.currentChapter && this.state.currentChapter.pages
-				? this.state.currentChapter.pages.length
-				: 0;
+		let content = null;
+		if (this.state.loading) {
+			content = <div className="reader-base-loading">
+				<AppLoading />
+			</div>;
+		}
+		else if (this.state.pageLoadError) {
+			content = <ReaderNotFound
+				onNextPage={this.advancePage}
+				onRefresh={this.onRefreshPage}
+				page={this.state.currentChapter.pages[this.state.currentPageIndex]}
+			/>;
+		}
+		else {
+			content = <img
+				className={'reader-base-image-' + this.state.settings.pageAlignment}
+				id="reader-base-image"
+				onClick={this.onClickImg}
+				onLoad={this.onImgLoad}
+				src={pageSrc}
+			/>;
+		}
 
-		const contentClass =
-			'reader-base-content reader-base-content-top-' +
-			(this.state.topCollapsed ? 'collapsed' : 'visible');
+		return <div className={contentClass} id="reader-content" tabIndex={1} onClick={this.onClickBackground}>
+			{content}
+			<ReaderPageInput
+				keyboardEventBus={this.keyboardEventBus}
+				onSelect={this.onSelectPage}
+				pageCount={this.getPageCount()}
+			/>
+		</div>
+	}
+
+	private renderMain() {
+		if (!this.state.visible) {
+			return <div />;
+		}
 
 		return (
 			<div
@@ -577,7 +630,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 					updateSettings={this.onUpdateSettings}
 					settings={this.state.settings}
 					currentPage={this.state.currentPageIndex + 1}
-					pageCount={pageCount}
+					pageCount={this.getPageCount()}
 					shareLink={this.getShareLink()}
 					collapsed={this.state.topCollapsed}
 					toggleCollapsed={this.onToggleCollapseTop}
@@ -596,32 +649,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 						onSelectVolume={this.onSelectVolume}
 						flatOutline={this.state.settings.flatOutline}
 					/>
-					<div className={contentClass} id="reader-content" tabIndex={1}>
-						{this.state.loading ? (
-							<div className="reader-base-loading">
-								<AppLoading />
-							</div>
-						) : this.state.pageLoadError ? (
-							<ReaderNotFound
-								onNextPage={this.advancePage}
-								onRefresh={this.onRefreshPage}
-								page={this.state.currentChapter.pages[this.state.currentPageIndex]}
-							/>
-						) : (
-							<img
-								className={'reader-base-image-' + this.state.settings.pageAlignment}
-								id="reader-base-image"
-								onClick={this.onClickImg}
-								onLoad={this.onImgLoad}
-								src={pageSrc}
-							/>
-						)}
-						<ReaderPageInput
-							keyboardEventBus={this.keyboardEventBus}
-							onSelect={this.onSelectPage}
-							pageCount={pageCount}
-						/>
-					</div>
+					{this.renderContent()}
 				</div>
 			</div>
 		);
