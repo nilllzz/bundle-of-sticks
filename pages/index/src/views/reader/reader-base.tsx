@@ -525,7 +525,8 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		});
 	}
 
-	private onClickImg() {
+	private onClickImg(e: React.MouseEvent<HTMLImageElement>) {
+		e.stopPropagation();
 		this.setState(
 			{
 				settingsVisible: false,
@@ -538,7 +539,12 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		if (!this.state.loading && !this.state.pageLoadError) {
 			// advance when clicked right of image
 			if (e.clientX >= e.currentTarget.clientWidth / 2) {
-				this.onClickImg();
+				this.setState(
+					{
+						settingsVisible: false,
+					},
+					this.advancePage
+				);
 			}
 			else {
 				this.setState(
@@ -593,7 +599,7 @@ export default class ReaderBase extends React.Component<any, ReaderBaseState> {
 		}
 		else {
 			content = <img
-				className={'reader-base-image-' + this.state.settings.pageAlignment}
+				className={'no-user-select reader-base-image-' + this.state.settings.pageAlignment}
 				id="reader-base-image"
 				onClick={this.onClickImg}
 				onLoad={this.onImgLoad}
