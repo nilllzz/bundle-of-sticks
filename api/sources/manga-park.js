@@ -223,10 +223,12 @@ module.exports = class MangaPark {
 					}
 
 					// number
-					let chapterNumberStr = linkElement.textContent.trim();
-					chapterNumberStr = chapterNumberStr.substr(
-						chapterNumberStr.lastIndexOf('.') + 1
-					);
+					const linkParts = linkElement.getAttribute('href').split('/');
+					const chapterPart = linkParts[linkParts.length - 2].trim();
+					let chapterNumberStr = chapterPart;
+					while (chapterNumberStr.length > 0 && isNaN(chapterNumberStr[0])) {
+						chapterNumberStr = chapterNumberStr.substr(1);
+					}
 					const chapterNumber = Number.parseFloat(chapterNumberStr);
 
 					// link
