@@ -9,6 +9,7 @@ import AppTabs, { AppTab } from '../../components/app/app-tabs';
 import { Link, Switch } from 'react-router-dom';
 import Bookmarks, { Bookmark } from '../../app/bookmarks';
 import Growls from '../shell/growls';
+import BookmarksGroup from '../../components/collection/bookmarks-group';
 
 type CollectionPageState = {
 	records: ReadingRecord[];
@@ -172,8 +173,21 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 
 		const hiddenBookmarksCount = this.state.bookmarks.length - bookmarks.length;
 
-		return (
-			<div className="collection-page-tab-bookmarks">
+		// if there's more than 10 bookmarks, show them grouped
+		if (bookmarks.length > 10) {
+			const groupLetters = bookmarks
+				.map(b => b.name[0])
+				.filter((value, index, self) => self.indexOf(value) === index)
+				.sort((a: string, b: string) => {
+					if (a < b) {
+						return -1;
+					}
+					if (a > b) {
+						return 1;
+					}
+					return 0;
+				});
+			return <div className="collection-page-tab-bookmarks">
 				<div className="collection-page-filter">
 					<AppTextbox
 						onChange={this.onChangeFilter}
@@ -183,26 +197,47 @@ export default class CollectionPage extends React.Component<any, CollectionPageS
 					/>
 				</div>
 
-				<div className="collection-page-continue-reading">
-					<div className="collection-page-continue-reading-list">
-						{bookmarks.map(b => {
-							const manga = new Manga(b.manga);
-							return (
-								<MangaContinueReading
-									key={manga.getId()}
-									manga={manga}
-									showRemove={true}
-									onRemoveRecord={_ => this.onRemoveBookmark(b)}
-								/>
-							);
-						})}
-					</div>
-					{hiddenBookmarksCount > 0 ? (
-						<div className="text-muted">+ {hiddenBookmarksCount} hidden</div>
-					) : null}
+				<div className="collection-page-bookmark-groups">
+					{groupLetters.map(l => {
+						const letterBookmarks = bookmarks.filter(b => b.name[0] === l);
+						return <BookmarksGroup bookmarks={letterBookmarks} letter={l} onRemoveBookmark={this.onRemoveBookmark} />
+					})}
 				</div>
 			</div>
-		);
+		}
+		else {
+			return (
+				<div className="collection-page-tab-bookmarks">
+					<div className="collection-page-filter">
+						<AppTextbox
+							onChange={this.onChangeFilter}
+							text={this.state.filter}
+							id="filter"
+							placeholder="Filter..."
+						/>
+					</div>
+
+					<div className="collection-page-continue-reading">
+						<div className="collection-page-continue-reading-list">
+							{bookmarks.map(b => {
+								const manga = new Manga(b.manga);
+								return (
+									<MangaContinueReading
+										key={manga.getId()}
+										manga={manga}
+										showRemove={true}
+										onRemoveRecord={_ => this.onRemoveBookmark(b)}
+									/>
+								);
+							})}
+						</div>
+						{hiddenBookmarksCount > 0 ? (
+							<div className="text-muted">+ {hiddenBookmarksCount} hidden</div>
+						) : null}
+					</div>
+				</div>
+			);
+		}
 	}
 
 	private renderReadingRecords() {
