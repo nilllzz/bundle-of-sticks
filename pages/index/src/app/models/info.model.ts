@@ -3,6 +3,10 @@ import Manga from './manga.model';
 import Artist from './artist.model';
 import Author from './author.model';
 import Folder from './folder.model';
+import ModelCache from './model-cache';
+import { Api } from '../api';
+
+const modelCache = new ModelCache<Info>();
 
 export default class Info extends BaseModel {
 	coverImg: string;
@@ -34,6 +38,26 @@ export default class Info extends BaseModel {
 			this.folders = Folder.populate(data.folders);
 		}
 	}
+
+	public static async fetch(providerId: string, mangaLink: string) {
+		const modelId = 'info/' + providerId + '/' + mangaLink;
+		if (modelCache.hasEntry(modelId)) {
+			return modelCache.getEntry(modelId);
+		}
+
+		const response = await Api.getRequest('/api/manga/info', {
+			host: providerId,
+			manga: mangaLink,
+		});
+		if (!response.success) {
+			return null;
+		} else {
+			const info = new Info(response.data);
+			modelCache.addEntry(modelId, info);
+			return info;
+		}
+	}
+
 }
 
 BaseModel.create(Info);

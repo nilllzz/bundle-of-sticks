@@ -38,7 +38,7 @@ export default class MangaContinueReading extends React.Component<
 	}
 
 	async componentDidMount() {
-		const info = await Manga.fetchInfo(this.props.manga.host.id, this.props.manga.link);
+		const info = await Info.fetch(this.props.manga.host.id, this.props.manga.link);
 
 		this.setState(
 			{

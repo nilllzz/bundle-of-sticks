@@ -59,7 +59,7 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 		const provider = this.props.match.params.provider;
 		const link = this.props.match.params.link;
 
-		const info = await Manga.fetchInfo(provider, link);
+		const info = await Info.fetch(provider, link);
 		if (!info) {
 			this.setState({
 				loading: false,
@@ -370,8 +370,8 @@ export default class MangaViewPage extends React.Component<any, MangaViewPageSta
 								{this.state.info.completionStatus ? (
 									this.state.info.completionStatus
 								) : (
-									<span className="text-muted">Unknown</span>
-								)}
+										<span className="text-muted">Unknown</span>
+									)}
 							</div>
 							<div className="manga-view-page-source manga-view-page-info-element">
 								<div className="manga-view-page-info-title">Source:</div>

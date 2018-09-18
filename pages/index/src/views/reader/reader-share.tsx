@@ -42,7 +42,7 @@ export default class ReaderShare extends React.Component<any, ReaderShareState> 
 	}
 
 	private async loadInfo() {
-		const info = await Manga.fetchInfo(this._provider, this._link);
+		const info = await Info.fetch(this._provider, this._link);
 		const success = !!info;
 
 		this.setState({
